@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leo McKenna">
-<meta name="dcterms.date" content="2023-10-11">
+<meta name="dcterms.date" content="2023-10-25">
 
 <title>Progress Memo 1</title>
 <style>
@@ -3022,7 +3022,7 @@ Data Science 1 with R (STAT 301-1)</p><p></p>
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 11, 2023</p>
+      <p class="date">October 25, 2023</p>
     </div>
   </div>
   
@@ -3032,20 +3032,6 @@ Data Science 1 with R (STAT 301-1)</p><p></p>
 
 </header>
 
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Memo format
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Like all other submissions for this course, we expect the memo to be neat and well organized.</p>
-<p>You should make this document your own. This is a template. To help with this we have added a date to the yaml above (good whenever writing memos). You should remove this block when making this document your own.</p>
-</div>
-</div>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -3059,27 +3045,14 @@ Github Repo Link
 <p><a href="https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git">https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git</a></p>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warning
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>GitHub (free account) cannot store large files. If you try to commit and push a large dataset you will have an ERROR! Any file over 100 MB (100,000 KB) needs to be added to the <code>.gitignore</code> file BEFORE committing.</p>
-<p><strong>We may need to do that for files in your final project!</strong></p>
-</div>
-</div>
 <section id="data-source" class="level2">
 <h2 class="anchored" data-anchor-id="data-source">Data source</h2>
-<p>Blah blah blah<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 </section>
 <section id="why-this-data" class="level2">
 <h2 class="anchored" data-anchor-id="why-this-data">Why this data</h2>
-<p>Blah blah blah<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>I choose this data for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. I think there are so many fascinating things to be gleaned by looking at data like this. And it makes me feel good about being a Patriots fan.</p>
+<p>Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I was hoping this data set could shed some light on how elo works and changes based on game outcomes.</p>
 </section>
 <section id="data-quality-complexity-check" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-complexity-check">Data quality &amp; complexity check</h2>
@@ -3087,7 +3060,7 @@ Warning
 </section>
 <section id="potential-data-issues" class="level2">
 <h2 class="anchored" data-anchor-id="potential-data-issues">Potential data issues</h2>
-<p>Blah blah blah</p>
+<p>Because of poor documentation, there are many NA values especially in early games from the 20s through the 60s? - analyze. This could make it hard to look for trends over time, so it may be wise to analyze more recent data.</p>
 </section>
 <section id="misc" class="level2">
 <h2 class="anchored" data-anchor-id="misc">Misc</h2>
@@ -3098,8 +3071,7 @@ Warning
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>where blah blah came from, an example of footnote<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>another footnote<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>https://github.com/fivethirtyeight/data/tree/master/nfl-elo<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->

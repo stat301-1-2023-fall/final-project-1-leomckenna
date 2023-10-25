@@ -18,15 +18,6 @@ execute:
 from: markdown+emoji 
 ---
 
-::: {.callout-important}
-## Memo format
-
-Like all other submissions for this course, we expect the memo to be neat and well organized.
-
-You should make this document your own. This is a template. To help with this we have added a date to the yaml above (good whenever writing memos). You should remove this block when making this document your own.
-
-:::
-
 ::: {.callout-tip icon=false}
 
 ## Github Repo Link
@@ -35,19 +26,15 @@ You should make this document your own. This is a template. To help with this we
 
 :::
 
-::: {.callout-warning}
-GitHub (free account) cannot store large files. If you try to commit and push a large dataset you will have an ERROR! Any file over 100 MB (100,000 KB) needs to be added to the `.gitignore` file BEFORE committing.
-
-**We may need to do that for files in your final project!**
-:::
-
 ## Data source
 
-Blah blah blah^[where blah blah came from, an example of footnote]
+This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. ^[https://github.com/fivethirtyeight/data/tree/master/nfl-elo]
 
 ## Why this data
 
-Blah blah blah^[another footnote]
+I choose this data for a few reasons. Firstly, I'm a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. I think there are so many fascinating things to be gleaned by looking at data like this. And it makes me feel good about being a Patriots fan.
+
+Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I was hoping this data set could shed some light on how elo works and changes based on game outcomes.
 
 ## Data quality & complexity check
 
@@ -55,7 +42,7 @@ Blah blah blah
 
 ## Potential data issues
 
-Blah blah blah
+Because of poor documentation, there are many NA values especially in early games from the 20s through the 60s? - analyze. This could make it hard to look for trends over time, so it may be wise to analyze more recent data.
 
 ## Misc
 
