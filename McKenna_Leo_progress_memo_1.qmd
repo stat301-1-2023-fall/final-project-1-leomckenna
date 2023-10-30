@@ -28,22 +28,40 @@ from: markdown+emoji
 
 ## Data source
 
-This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. ^[https://github.com/fivethirtyeight/data/tree/master/nfl-elo]
+This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. ^[https://github.com/fivethirtyeight/data/tree/master/nfl-elo] I don't anticipate having to join data sets together as this data set seemingly includes all relevant information I'm looking for.
 
 ## Why this data
 
-I choose this data for a few reasons. Firstly, I'm a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. I think there are so many fascinating things to be gleaned by looking at data like this. And it makes me feel good about being a Patriots fan.
+I choose this data for a few reasons. Firstly, I'm a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. Many people choose to ignore statistical data in football in favor of other factors, but I think a lot can ba gleaned by looking at data like this.
 
-Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I was hoping this data set could shed some light on how elo works and changes based on game outcomes.
+Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I am hoping this data set could shed some light on how elo works and changes based on game outcomes. 
 
 ## Data quality & complexity check
 
-Blah blah blah
+```{r}
+## load packages and data----
+library(tidyverse)
+#read in data
+nfl_elo_data <- read_csv("data/nfl_elo.csv")
+nfl_elo_data
+```
+There are 33 total variables and 17,379 observations. 
+```{r}
+nfl_elo_data |> 
+ select(where(is.numeric))
+```
+There are 27 numeric variables, and 6 categorical variables. Just based on this limited look at the data, I can already tell that there are going to be missingness issues. I believe that because of poor documentation, there is going to be a lot of missing data specifically during the first few decades of this data. 
+```{r}
+nfl_elo_data |> 
+  filter(!is.na(total_rating))
+```
+Some variables, such as `total_rating` only begin as early as 2021, which means that it is going to be missing for over 100 years of data in this data set which begins in 1920. 
+
 
 ## Potential data issues
 
-Because of poor documentation, there are many NA values especially in early games from the 20s through the 60s? - analyze. This could make it hard to look for trends over time, so it may be wise to analyze more recent data.
+The data has already seemingly been cleaned, and there are no issues with the columns and how they are functioning. I think because of the issue of missingness in the data from earlier decades, it may be hard to analyze trends over large periods of time for many of the variables. Also, in order to analyze the data in terms of the overall elo of a game and not the individual elo of each team or quarterback, I may have to do a lot of mutating and/or combining variables to do my analysis. I think it may also take me some time to fully wrap my head around what each variable means exactly. Some of them are obvious, but I'll need to fully understand what goes into an elo rating or a value rating before I'm able to analyze the data easily.
 
 ## Misc
 
-Blah Blah
+I plan to use this data to analyze the New England Patriots specifically as they are the football team I've been rooting for since I was very young. I'm curious to learn about how the team has evolved over time, and use some of my outside knowledge to help explain some of the statistical trends, or vice versa. 

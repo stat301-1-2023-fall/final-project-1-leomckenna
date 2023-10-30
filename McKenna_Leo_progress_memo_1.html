@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leo McKenna">
-<meta name="dcterms.date" content="2023-10-25">
+<meta name="dcterms.date" content="2023-10-29">
 
 <title>Progress Memo 1</title>
 <style>
@@ -3022,7 +3022,7 @@ Data Science 1 with R (STAT 301-1)</p><p></p>
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 25, 2023</p>
+      <p class="date">October 29, 2023</p>
     </div>
   </div>
   
@@ -3047,24 +3047,98 @@ Github Repo Link
 </div>
 <section id="data-source" class="level2">
 <h2 class="anchored" data-anchor-id="data-source">Data source</h2>
-<p>This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>This data source is a compilation of Elo ratings and predictions from NFL games dating all the way back to 1920. This data was compiled by github user jayb for FiveThirtyEight. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> I don’t anticipate having to join data sets together as this data set seemingly includes all relevant information I’m looking for.</p>
 </section>
 <section id="why-this-data" class="level2">
 <h2 class="anchored" data-anchor-id="why-this-data">Why this data</h2>
-<p>I choose this data for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. I think there are so many fascinating things to be gleaned by looking at data like this. And it makes me feel good about being a Patriots fan.</p>
-<p>Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I was hoping this data set could shed some light on how elo works and changes based on game outcomes.</p>
+<p>I choose this data for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind, at least in the public sphere. Many people choose to ignore statistical data in football in favor of other factors, but I think a lot can ba gleaned by looking at data like this.</p>
+<p>Secondly, I am a competitive Scrabble player, and as a community we use the ELO rating system. However, I know almost nothing about it, and so I am hoping this data set could shed some light on how elo works and changes based on game outcomes.</p>
 </section>
 <section id="data-quality-complexity-check" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-complexity-check">Data quality &amp; complexity check</h2>
-<p>Blah blah blah</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17,379 × 33
+   date       season neutral playoff team1 team2 elo1_pre elo2_pre elo_prob1
+   &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+ 1 1920-09-26   1920       0 &lt;NA&gt;    RII   STP      1504.    1300      0.825
+ 2 1920-10-03   1920       0 &lt;NA&gt;    AKR   WHE      1503.    1300      0.824
+ 3 1920-10-03   1920       0 &lt;NA&gt;    BFF   WBU      1478.    1300      0.802
+ 4 1920-10-03   1920       0 &lt;NA&gt;    DAY   COL      1493.    1505.     0.576
+ 5 1920-10-03   1920       0 &lt;NA&gt;    RII   MUN      1516.    1478.     0.644
+ 6 1920-10-03   1920       0 &lt;NA&gt;    RCH   ABU      1503.    1300      0.824
+ 7 1920-10-03   1920       0 &lt;NA&gt;    CHI   MUT      1368.    1300      0.683
+ 8 1920-10-03   1920       0 &lt;NA&gt;    CBD   PTQ      1505.    1300      0.825
+ 9 1920-10-10   1920       0 &lt;NA&gt;    RII   HAM      1542.    1444.     0.719
+10 1920-10-10   1920       0 &lt;NA&gt;    CHI   KEW      1387.    1300      0.705
+# ℹ 17,369 more rows
+# ℹ 24 more variables: elo_prob2 &lt;dbl&gt;, elo1_post &lt;dbl&gt;, elo2_post &lt;dbl&gt;,
+#   qbelo1_pre &lt;dbl&gt;, qbelo2_pre &lt;dbl&gt;, qb1 &lt;chr&gt;, qb2 &lt;chr&gt;,
+#   qb1_value_pre &lt;dbl&gt;, qb2_value_pre &lt;dbl&gt;, qb1_adj &lt;dbl&gt;, qb2_adj &lt;dbl&gt;,
+#   qbelo_prob1 &lt;dbl&gt;, qbelo_prob2 &lt;dbl&gt;, qb1_game_value &lt;dbl&gt;,
+#   qb2_game_value &lt;dbl&gt;, qb1_value_post &lt;dbl&gt;, qb2_value_post &lt;dbl&gt;,
+#   qbelo1_post &lt;dbl&gt;, qbelo2_post &lt;dbl&gt;, score1 &lt;dbl&gt;, score2 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>There are 33 total variables and 17,379 observations.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17,379 × 27
+   season neutral elo1_pre elo2_pre elo_prob1 elo_prob2 elo1_post elo2_post
+    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1   1920       0    1504.    1300      0.825     0.175     1516.     1288.
+ 2   1920       0    1503.    1300      0.824     0.176     1515.     1288.
+ 3   1920       0    1478.    1300      0.802     0.198     1490.     1288.
+ 4   1920       0    1493.    1505.     0.576     0.424     1515.     1482.
+ 5   1920       0    1516.    1478.     0.644     0.356     1542.     1452.
+ 6   1920       0    1503.    1300      0.824     0.176     1511.     1292.
+ 7   1920       0    1368.    1300      0.683     0.317     1387.     1282.
+ 8   1920       0    1505.    1300      0.825     0.175     1517.     1288.
+ 9   1920       0    1542.    1444.     0.719     0.281     1559.     1427.
+10   1920       0    1387.    1300      0.705     0.295     1403.     1284.
+# ℹ 17,369 more rows
+# ℹ 19 more variables: qbelo1_pre &lt;dbl&gt;, qbelo2_pre &lt;dbl&gt;, qb1_value_pre &lt;dbl&gt;,
+#   qb2_value_pre &lt;dbl&gt;, qb1_adj &lt;dbl&gt;, qb2_adj &lt;dbl&gt;, qbelo_prob1 &lt;dbl&gt;,
+#   qbelo_prob2 &lt;dbl&gt;, qb1_game_value &lt;dbl&gt;, qb2_game_value &lt;dbl&gt;,
+#   qb1_value_post &lt;dbl&gt;, qb2_value_post &lt;dbl&gt;, qbelo1_post &lt;dbl&gt;,
+#   qbelo2_post &lt;dbl&gt;, score1 &lt;dbl&gt;, score2 &lt;dbl&gt;, quality &lt;dbl&gt;,
+#   importance &lt;dbl&gt;, total_rating &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>There are 27 numeric variables, and 6 categorical variables. Just based on this limited look at the data, I can already tell that there are going to be missingness issues. I believe that because of poor documentation, there is going to be a lot of missing data specifically during the first few decades of this data.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 569 × 33
+   date       season neutral playoff team1 team2 elo1_pre elo2_pre elo_prob1
+   &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+ 1 2021-09-09   2021       0 &lt;NA&gt;    TB    DAL      1656.    1452.     0.825
+ 2 2021-09-12   2021       0 &lt;NA&gt;    CAR   NYJ      1437.    1382.     0.666
+ 3 2021-09-12   2021       0 &lt;NA&gt;    TEN   ARI      1553.    1486.     0.681
+ 4 2021-09-12   2021       0 &lt;NA&gt;    IND   SEA      1561.    1566.     0.587
+ 5 2021-09-12   2021       0 &lt;NA&gt;    WSH   LAC      1463.    1497.     0.545
+ 6 2021-09-12   2021       0 &lt;NA&gt;    HOU   JAX      1433.    1339.     0.714
+ 7 2021-09-12   2021       0 &lt;NA&gt;    CIN   MIN      1412.    1495.     0.475
+ 8 2021-09-12   2021       0 &lt;NA&gt;    DET   SF       1391.    1491.     0.450
+ 9 2021-09-12   2021       0 &lt;NA&gt;    ATL   PHI      1484.    1426.     0.670
+10 2021-09-12   2021       0 &lt;NA&gt;    BUF   PIT      1634.    1526.     0.730
+# ℹ 559 more rows
+# ℹ 24 more variables: elo_prob2 &lt;dbl&gt;, elo1_post &lt;dbl&gt;, elo2_post &lt;dbl&gt;,
+#   qbelo1_pre &lt;dbl&gt;, qbelo2_pre &lt;dbl&gt;, qb1 &lt;chr&gt;, qb2 &lt;chr&gt;,
+#   qb1_value_pre &lt;dbl&gt;, qb2_value_pre &lt;dbl&gt;, qb1_adj &lt;dbl&gt;, qb2_adj &lt;dbl&gt;,
+#   qbelo_prob1 &lt;dbl&gt;, qbelo_prob2 &lt;dbl&gt;, qb1_game_value &lt;dbl&gt;,
+#   qb2_game_value &lt;dbl&gt;, qb1_value_post &lt;dbl&gt;, qb2_value_post &lt;dbl&gt;,
+#   qbelo1_post &lt;dbl&gt;, qbelo2_post &lt;dbl&gt;, score1 &lt;dbl&gt;, score2 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>Some variables, such as <code>total_rating</code> only begin as early as 2021, which means that it is going to be missing for over 100 years of data in this data set which begins in 1920.</p>
 </section>
 <section id="potential-data-issues" class="level2">
 <h2 class="anchored" data-anchor-id="potential-data-issues">Potential data issues</h2>
-<p>Because of poor documentation, there are many NA values especially in early games from the 20s through the 60s? - analyze. This could make it hard to look for trends over time, so it may be wise to analyze more recent data.</p>
+<p>The data has already seemingly been cleaned, and there are no issues with the columns and how they are functioning. I think because of the issue of missingness in the data from earlier decades, it may be hard to analyze trends over large periods of time for many of the variables. Also, in order to analyze the data in terms of the overall elo of a game and not the individual elo of each team or quarterback, I may have to do a lot of mutating and/or combining variables to do my analysis. I think it may also take me some time to fully wrap my head around what each variable means exactly. Some of them are obvious, but I’ll need to fully understand what goes into an elo rating or a value rating before I’m able to analyze the data easily.</p>
 </section>
 <section id="misc" class="level2">
 <h2 class="anchored" data-anchor-id="misc">Misc</h2>
-<p>Blah Blah</p>
+<p>I plan to use this data to analyze the New England Patriots specifically as they are the football team I’ve been rooting for since I was very young. I’m curious to learn about how the team has evolved over time, and use some of my outside knowledge to help explain some of the statistical trends, or vice versa.</p>
 </section>
 
 
