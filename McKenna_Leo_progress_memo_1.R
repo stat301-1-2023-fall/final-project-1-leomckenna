@@ -1,4 +1,4 @@
-# Final Project ----
+# Final Project Progress Memo 1 ----
 # Stat 301-1
 
 ## load packages and data----
