@@ -3,7 +3,6 @@
 
 ## load packages and data----
 library(tidyverse)
-library(skimr)
 #read in data
 nfl_elo_data <- read_csv("data/nfl_elo.csv")
 foxboro_weather <- read_csv("data/foxboro_weather_data.csv")
@@ -14,17 +13,21 @@ foxboro_weather_cleaned <- foxboro_weather |>
   slice(-c(1, 23, 24, 25, 26, 32)) |> 
   slice(-27)
 
-foxboro_weather_cleaned %>%
-  setNames(foxboro_weather_cleaned[1, ]) %>%
-  slice(-1) %>%
-  pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") %>%
-  mutate(across(-c(Year, Annual, Month), ~ifelse(. == "M", NA, as.numeric(.)))) %>%
-  group_by(Year) %>%
+foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
+  setNames(foxboro_weather_cleaned[1, ]) |> 
+  slice(-1) |> 
+  pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") 
+
+foxboro_weather_cleaned$Value[foxboro_weather_cleaned$Value == "M"] <- NA
+foxboro_weather_cleaned$Value <- as.numeric(foxboro_weather_cleaned$Value)
+  
+foxboro_weather_cleaned |>   
+  group_by(Year) |> 
   summarize(
     Mean = mean(Value, na.rm = TRUE),
     Max = max(Value, na.rm = TRUE),
     Min = min(Value, na.rm = TRUE)
-  ) %>%
+  ) |> 
   bind_cols(select(foxboro_weather_cleaned, Year, Annual)) %>%
   arrange(Year)
 
