@@ -16,18 +16,14 @@ foxboro_weather_cleaned <- foxboro_weather |>
 foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
   setNames(foxboro_weather_cleaned[1, ]) |> 
   slice(-1) |> 
-  pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") 
+  pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
+  rename(annual_mean_temp = Annual, monthly_mean_temp = Value)
 
 foxboro_weather_cleaned$Value[foxboro_weather_cleaned$Value == "M"] <- NA
 foxboro_weather_cleaned$Value <- as.numeric(foxboro_weather_cleaned$Value)
   
 foxboro_weather_cleaned <- foxboro_weather_cleaned |>   
-  group_by(Year) |> 
-  summarize(
-    mean_temp = mean(Value, na.rm = TRUE),
-    max_temp = max(Value, na.rm = TRUE),
-    min_temp = min(Value, na.rm = TRUE)
-  ) 
+  group_by(Year) 
 
   
 #searching for intersecting names
@@ -36,8 +32,7 @@ names(nfl_elo_data) |>
 
 #filtering data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
-  filter(season >= 2000, team1 == "NE" | team2 == "NE") |> 
-  group_by(season) 
+  filter(season >= 2000, team1 == "NE" | team2 == "NE")
 
 pats_elo_data <- pats_elo_data |> 
   filter(team1 == "NE" | team2 == "NE") |> 
@@ -57,16 +52,41 @@ pats_elo_data <- pats_elo_data |>
   ) |> 
   select(date, season, neutral, playoff, team, elo_pre, elo_prob, elo_post,
          qbelo_pre, qb, qb_value_pre, qb_adj, qbelo_prob, qb_game_value,
-         qb_value_post, qbelo_post, quality, importance, total_rating)
+         qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2)
+
+#Adding monthly data to pats elo data to so I can analyze using monthly weather trends
+
+monthly_pats_elo <- pats_elo_data |> 
+  group_by(year, month) |> 
+  summarize(
+    avg_elo_pre = mean(elo_pre),
+    avg_elo_post = mean(elo_post),
+    avg_total_rating = mean(total_rating)
+  )
 
 #joining data
 
 pats_elo_data <- pats_elo_data |> 
   mutate(season = as.character(season)) |> 
-  select(-5)
+  mutate(
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  ) |> 
+  select(-c(1,5)) |> 
+  relocate(year, month, day)
 
-pats_elo_data |> 
-  left_join(foxboro_weather_cleaned, by = join_by(season == Year)) |> 
-  select(-c(contains('qb')))
+foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
+  rename_all(tolower) 
+
+pats_weather_data <- monthly_pats_elo |> 
+  mutate(year = as.character(year)) |> 
+  mutate(month = month.abb[month]) |> 
+  left_join(foxboro_weather_cleaned, by = join_by(year, month))
+
+#searching for trends
+
+pats_weather_data |> 
+  print(n = 121)
 
 

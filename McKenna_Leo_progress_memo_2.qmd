@@ -25,7 +25,7 @@ from: markdown+emoji
 
 :::
 
-## Load packages and data
+## Load Packages and Data
 
 ```{r}
 #| label: load-pkgs
@@ -39,6 +39,8 @@ nfl_elo_data <- read_csv("data/nfl_elo.csv")
 foxboro_weather <- read_csv("data/foxboro_weather_data.csv")
 
 ```
+
+## Data Cleaning
 
 ```{r}
 #cleaning data
@@ -63,12 +65,7 @@ foxboro_weather_cleaned <- foxboro_weather_cleaned |>
     Min = min(Value, na.rm = TRUE)
   ) 
 
-  
-#searching for intersecting names
-names(nfl_elo_data) |> 
-  intersect(names(foxboro_weather_cleaned))
-
-#filtering data and getting rid of unnecessary teams
+#filtering elo data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
   filter(season >= 2000, team1 == "NE" | team2 == "NE") |> 
   group_by(season) 
@@ -92,13 +89,39 @@ pats_elo_data <- pats_elo_data |>
   select(date, season, neutral, playoff, team, elo_pre, elo_prob, elo_post,
          qbelo_pre, qb, qb_value_pre, qb_adj, qbelo_prob, qb_game_value,
          qb_value_post, qbelo_post, quality, importance, total_rating)
+```
 
+## Joining Data
+
+```{r}
+#searching for intersecting names
+names(pats_elo_data) |> 
+  intersect(names(foxboro_weather_cleaned))
+  
 #joining data
 
 pats_elo_data <- pats_elo_data |> 
-  mutate(season = as.character(season))
+  mutate(season = as.character(season)) |> 
+  mutate(
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  ) |> 
+  select(-c(1,5)) |> 
+  relocate(year, month, day)
 
-pats_elo_data |> 
-  left_join(foxboro_weather_cleaned, by = join_by(season == Year))
+foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
+  rename_all(tolower)
+  
+pats_weather_data <- pats_elo_data |> 
+  mutate(year = as.character(year)) |> 
+  left_join(foxboro_weather_cleaned, by = join_by(year)) |> 
+  select(-c(contains('qb')))
+```
+
+## Searching for Trends
+
+```{r}
+
 ```
 
