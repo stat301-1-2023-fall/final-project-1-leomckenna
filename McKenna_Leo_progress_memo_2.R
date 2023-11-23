@@ -19,8 +19,8 @@ foxboro_weather_cleaned <- foxboro_weather_cleaned |>
   pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
   rename(annual_mean_temp = Annual, monthly_mean_temp = Value)
 
-foxboro_weather_cleaned$Value[foxboro_weather_cleaned$Value == "M"] <- NA
-foxboro_weather_cleaned$Value <- as.numeric(foxboro_weather_cleaned$Value)
+foxboro_weather_cleaned$monthly_mean_temp[foxboro_weather_cleaned$monthly_mean_temp == "M"] <- NA
+foxboro_weather_cleaned$monthly_mean_temp <- as.numeric(foxboro_weather_cleaned$monthly_mean_temp)
   
 foxboro_weather_cleaned <- foxboro_weather_cleaned |>   
   group_by(Year) 
@@ -32,7 +32,11 @@ names(nfl_elo_data) |>
 
 #filtering data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
-  filter(season >= 2000, team1 == "NE" | team2 == "NE")
+  filter(season >= 2000, team1 == "NE" | team2 == "NE") |> 
+  mutate(winner = case_when(score1 > score2 ~ team1,
+                            score2 > score1 ~ team2,
+                            TRUE ~ "Tie")) |> 
+  select(date, season, winner, everything())
 
 pats_elo_data <- pats_elo_data |> 
   filter(team1 == "NE" | team2 == "NE") |> 
@@ -52,29 +56,27 @@ pats_elo_data <- pats_elo_data |>
   ) |> 
   select(date, season, neutral, playoff, team, elo_pre, elo_prob, elo_post,
          qbelo_pre, qb, qb_value_pre, qb_adj, qbelo_prob, qb_game_value,
-         qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2)
+         qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2, winner, playoff)
 
 #Adding monthly data to pats elo data to so I can analyze using monthly weather trends
 
 monthly_pats_elo <- pats_elo_data |> 
-  group_by(year, month) |> 
-  summarize(
-    avg_elo_pre = mean(elo_pre),
-    avg_elo_post = mean(elo_post),
-    avg_total_rating = mean(total_rating)
-  )
+  mutate(season = as.character(season),
+         year = year(date),
+         month = month(date),
+         day = day(date)) |> 
+  select(-c(1, 5)) |> 
+  relocate(year, month, day, winner) |> 
+  group_by(year, month, season, winner, playoff) |> 
+  mutate(wins_per_month = sum(winner == "NE")) |> 
+  group_by(year, month, season) |> 
+  mutate(elo_pre_per_month = mean(elo_pre),
+         elo_post_per_month = mean(elo_post)) |> 
+  ungroup() |> 
+  relocate(wins_per_month, elo_pre_per_month, elo_post_per_month)
+
 
 #joining data
-
-pats_elo_data <- pats_elo_data |> 
-  mutate(season = as.character(season)) |> 
-  mutate(
-    year = year(date),
-    month = month(date),
-    day = day(date)
-  ) |> 
-  select(-c(1,5)) |> 
-  relocate(year, month, day)
 
 foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
   rename_all(tolower) 
@@ -82,11 +84,38 @@ foxboro_weather_cleaned <- foxboro_weather_cleaned |>
 pats_weather_data <- monthly_pats_elo |> 
   mutate(year = as.character(year)) |> 
   mutate(month = month.abb[month]) |> 
-  left_join(foxboro_weather_cleaned, by = join_by(year, month))
+  mutate(wins_per_month = as_factor(wins_per_month)) |> 
+  left_join(foxboro_weather_cleaned, by = join_by(year, month)) |> 
+  group_by(year, month) |> 
+  filter(is.na(playoff))
 
 #searching for trends
 
 pats_weather_data |> 
-  print(n = 121)
+  ggplot(aes(x = elo_post_per_month, y = monthly_mean_temp)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
+  labs(x = "ELO Post per Month", y = "Monthly Mean Temperature", title = "Relationship between ELO 
+       Post and Monthly Mean Temperature") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black"),
+    plot.title = element_text(hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    legend.position = "top"
+  )
 
+
+pats_weather_data |> 
+  ggplot(aes(x = wins_per_month, y = monthly_mean_temp)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "darkred", color = "black", alpha = 0.7) +
+  labs(x = "Wins per Month", y = "Monthly Mean Temperature") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black")
+  )
 
