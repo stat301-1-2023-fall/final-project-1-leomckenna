@@ -6,6 +6,10 @@ library(tidyverse)
 #read in data
 nfl_elo_data <- read_csv("data/nfl_elo.csv")
 foxboro_weather <- read_csv("data/foxboro_weather_data.csv")
+url <- "http://www.habitatring.com/games.csv"
+dest_file <- "data/nfl_games.csv"
+download.file(url, destfile = dest_file, mode = "wb")
+nfl_games <- read_csv(dest_file)
 
 #cleaning data
 foxboro_weather_cleaned <- foxboro_weather |> 
@@ -64,9 +68,9 @@ monthly_pats_elo <- pats_elo_data |>
   mutate(season = as.character(season),
          year = year(date),
          month = month(date),
-         day = day(date)) |> 
+         week = week(date)) |> 
   select(-c(1, 5)) |> 
-  relocate(year, month, day, winner) |> 
+  relocate(year, month, week, winner) |> 
   group_by(year, month, season, winner, playoff) |> 
   mutate(wins_per_month = sum(winner == "NE")) |> 
   group_by(year, month, season) |> 
@@ -75,13 +79,12 @@ monthly_pats_elo <- pats_elo_data |>
   ungroup() |> 
   relocate(wins_per_month, elo_pre_per_month, elo_post_per_month)
 
-
 #joining data
 
 foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
   rename_all(tolower) 
 
-pats_weather_data <- monthly_pats_elo |> 
+foxboro_data <- monthly_pats_elo |> 
   mutate(year = as.character(year)) |> 
   mutate(month = month.abb[month]) |> 
   mutate(wins_per_month = as_factor(wins_per_month)) |> 
@@ -89,14 +92,26 @@ pats_weather_data <- monthly_pats_elo |>
   group_by(year, month) |> 
   filter(is.na(playoff))
 
+
 #searching for trends
+
+pats_weather_data  |> 
+  ggplot(aes(x = elo_post_per_month)) +
+  geom_histogram(fill = "darkred", color = "black", binwidth = 50) +
+  labs(x = "Wins per Month", y = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black")
+  )
 
 pats_weather_data |> 
   ggplot(aes(x = elo_post_per_month, y = monthly_mean_temp)) +
   geom_point(color = "blue", size = 3) +
   geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
-  labs(x = "ELO Post per Month", y = "Monthly Mean Temperature", title = "Relationship between ELO 
-       Post and Monthly Mean Temperature") +
+  labs(x = "ELO Post per Month", y = "Monthly Mean Temperature", title = "Relationship between Average Monthly
+       ELO Post and Monthly Mean Temperature") +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
@@ -107,6 +122,16 @@ pats_weather_data |>
     legend.position = "top"
   )
 
+pats_weather_data  |> 
+  ggplot(aes(x = wins_per_month)) +
+  geom_bar(fill = "darkred", color = "black", alpha = 0.7) +
+  labs(x = "Wins per Month", y = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black")
+  )
 
 pats_weather_data |> 
   ggplot(aes(x = wins_per_month, y = monthly_mean_temp)) +
