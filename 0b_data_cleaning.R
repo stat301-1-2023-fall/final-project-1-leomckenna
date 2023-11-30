@@ -32,6 +32,7 @@ pats_elo_data <- nfl_elo_data |>
   mutate(winner = case_when(score1 > score2 ~ team1,
                             score2 > score1 ~ team2,
                             TRUE ~ "Tie")) |> 
+  mutate(pats_score = if_else(team1 == "NE", score1, if_else(team2 == "NE", score2, NA_real_))) |> 
   select(date, season, winner, everything())
 
 pats_elo_data <- pats_elo_data |> 
@@ -52,7 +53,9 @@ pats_elo_data <- pats_elo_data |>
   ) |> 
   select(date, season, neutral, playoff, team, elo_pre, elo_prob, elo_post,
          qbelo_pre, qb, qb_value_pre, qb_adj, qbelo_prob, qb_game_value,
-         qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2, winner, playoff)
+         qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2, winner, playoff, pats_score) 
+
+
 
 #Summarizing data by month for the elo data set to so I can analyze using monthly weather trends
 
