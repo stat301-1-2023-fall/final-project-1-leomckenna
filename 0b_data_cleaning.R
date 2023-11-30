@@ -1,23 +1,23 @@
-#cleaning weather data
-foxboro_weather_cleaned <- foxboro_weather |> 
+#cleaning temp data
+foxboro_temp_cleaned <- foxboro_temp |> 
   select(-c(1, 16)) |> 
   slice(-c(1, 23, 24, 25, 26, 32)) |> 
   slice(-27)
 
-foxboro_weather_cleaned <- foxboro_weather_cleaned |> 
-  setNames(foxboro_weather_cleaned[1, ]) |> 
+foxboro_temp_cleaned <- foxboro_temp_cleaned |> 
+  setNames(foxboro_temp_cleaned[1, ]) |> 
   slice(-1) |> 
   pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
   rename(annual_mean_temp = Annual, monthly_mean_temp = Value)
 
-foxboro_weather_cleaned$monthly_mean_temp[foxboro_weather_cleaned$monthly_mean_temp == "M"] <- NA
-foxboro_weather_cleaned$monthly_mean_temp <- as.numeric(foxboro_weather_cleaned$monthly_mean_temp)
+foxboro_temp_cleaned$monthly_mean_temp[foxboro_temp_cleaned$monthly_mean_temp == "M"] <- NA
+foxboro_temp_cleaned$monthly_mean_temp <- as.numeric(foxboro_temp_cleaned$monthly_mean_temp)
 
-foxboro_weather_cleaned <- foxboro_weather_cleaned |>   
+foxboro_temp_cleaned <- foxboro_temp_cleaned |>   
   group_by(Year) |> 
   rename_all(tolower) 
 
-foxboro_weather_cleaned <- foxboro_weather_cleaned |>
+foxboro_temp_cleaned <- foxboro_temp_cleaned |>
   ungroup() |> 
   slice(-c(241:300)) |> 
   filter(!is.na(monthly_mean_temp)) |> 
@@ -25,6 +25,24 @@ foxboro_weather_cleaned <- foxboro_weather_cleaned |>
   filter(month == "Sep" | month == "Oct" | month == "Nov" | month == "Dec" | month == "Jan" | month == "Feb") |> 
   relocate(year, month)
 
+#cleaning snow data
+
+foxboro_snow <- foxboro_snow |> 
+  select(-c(1, 16)) |> 
+  slice(-c(1, 27:33)) 
+
+snow_cleaned <- foxboro_snow |> 
+  setNames(foxboro_snow[1, ]) |> 
+  slice(-1) |> 
+  pivot_longer(cols = -c(Year, Season), names_to = "month", values_to = "snowfall") |> 
+  rename_all(tolower) |> 
+  mutate(year = str_sub(year, 1, 4)) |> 
+  group_by(year, month) |> 
+  relocate(year, month) |> 
+  filter(year > 1999 & (month == "Sep" | month == "Oct" | month == "Nov" | 
+                          month == "Dec" | month == "Jan" | month == "Feb")) |> 
+  mutate(snowfall = if_else(snowfall == "T", NA_character_, snowfall)) |> 
+  rename(annual = season)
 
 #filtering elo data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
@@ -57,7 +75,7 @@ pats_elo_data <- pats_elo_data |>
 
 
 
-#Summarizing data by month for the elo data set to so I can analyze using monthly weather trends
+#Summarizing data by month for the elo data set to so I can analyze using monthly temp trends
 
 monthly_pats_elo <- pats_elo_data |> 
   mutate(season = as.character(season),
