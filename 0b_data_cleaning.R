@@ -27,8 +27,36 @@ foxboro_temp_cleaned <- foxboro_temp_cleaned |>
 
 write_rds(foxboro_temp_cleaned, "data/temp_data.rds")
 
-#cleaning snow data
+#cleaning rain data
+foxboro_rain_cleaned <- foxboro_rain |> 
+  select(-c(1, 16)) |> 
+  slice(-c(1, 23, 24, 25, 26, 32)) |> 
+  slice(-27)
 
+foxboro_rain_cleaned <- foxboro_rain_cleaned |> 
+  setNames(foxboro_rain_cleaned[1, ]) |> 
+  slice(-1) |> 
+  pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
+  rename(annual_mean_rain = Annual, monthly_mean_rain = Value)
+
+foxboro_rain_cleaned$monthly_mean_rain[foxboro_rain_cleaned$monthly_mean_rain == "M"] <- NA
+foxboro_rain_cleaned$monthly_mean_rain <- as.numeric(foxboro_rain_cleaned$monthly_mean_rain)
+
+foxboro_rain_cleaned <- foxboro_rain_cleaned |>   
+  group_by(Year) |> 
+  rename_all(tolower) 
+
+foxboro_rain_cleaned <- foxboro_rain_cleaned |>
+  ungroup() |> 
+  slice(-c(241:300)) |> 
+  filter(!is.na(monthly_mean_rain)) |> 
+  group_by(month) |> 
+  filter(month == "Sep" | month == "Oct" | month == "Nov" | month == "Dec" | month == "Jan" | month == "Feb") |> 
+  relocate(year, month)
+
+write_rds(foxboro_rain_cleaned, "data/rain_data.rds")
+
+#cleaning snow data
 foxboro_snow <- foxboro_snow |> 
   select(-c(1, 16)) |> 
   slice(-c(1, 27:33)) 
@@ -44,7 +72,7 @@ snow_cleaned <- foxboro_snow |>
   filter(year > 1999 & (month == "Sep" | month == "Oct" | month == "Nov" | 
                           month == "Dec" | month == "Jan" | month == "Feb")) |> 
   mutate(snowfall = if_else(snowfall == "T", NA_character_, snowfall)) |> 
-  rename(annual = season)
+  rename(annual_snowfall = season)
 
 write_rds(snow_cleaned, "data/snow_data.rds")
 
@@ -78,17 +106,18 @@ pats_elo_data <- pats_elo_data |>
          qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2, winner, playoff, pats_score) 
 
 
-#Summarizing data by month for the elo data set to so I can analyze using monthly temp trends
+#Summarizing data by month for the elo data set to so I can analyze using monthly trends
 
 monthly_pats_elo <- pats_elo_data |> 
   mutate(season = as.character(season),
          year = year(date),
-         month = month(date),
-         week = week(date)) |> 
+         month = month(date)
+         ) |> 
   select(-c(1, 5)) |> 
-  relocate(year, month, week, winner) |> 
+  relocate(year, month, winner) |> 
   group_by(year, month, season, winner, playoff) |> 
-  mutate(wins_per_month = sum(winner == "NE")) |> 
+  mutate(wins_per_month = sum(winner == "NE"),
+         avg_score = mean(pats_score)) |> 
   group_by(year, month, season) |> 
   mutate(elo_pre_per_month = mean(elo_pre),
          elo_post_per_month = mean(elo_post)) |> 
@@ -98,18 +127,22 @@ monthly_pats_elo <- pats_elo_data |>
   mutate(month = month.abb[month]) |> 
   mutate(wins_per_month = as_factor(wins_per_month))
 
-write_rds(monthly_pats_elo, "data/elo_data.rds")
 
+write_rds(monthly_pats_elo, "data/elo_data.rds")
 
 #Filtering nfl_games data set
 
 pats_games <- nfl_games |> 
   select(season, game_id, gameday, away_team, temp, wind, stadium_id, referee, overtime, week) |> 
   filter(str_detect(stadium_id, "BOS") & season > 1999) |> 
-  mutate(month = str_extract(gameday, "(?<=-)\\d{2}")) |> 
-  mutate(month = as.numeric(month)) |> 
-  mutate(month = month.abb[month]) |> 
-  mutate(season = as.character(season)) |> 
-  relocate(season, month)
+  mutate(
+    month = month.abb[as.numeric(str_extract(gameday, "(?<=-)\\d{2}"))],
+    year = as.character(substr(gameday, 1, 4))) |> 
+  group_by(month, year) |> 
+  mutate(
+    wind_per_month = mean(wind)
+  ) |> 
+  select(-c(1, 6,7)) |> 
+  relocate(year, month)
 
 write_rds(pats_games, "data/game_data.rds")
