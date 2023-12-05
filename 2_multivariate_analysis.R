@@ -1,5 +1,5 @@
 
-pats_weather_data |> 
+pats_temp_data |> 
   ggplot(aes(x = elo_post_per_month, y = monthly_mean_temp)) +
   geom_point(color = "blue", size = 3) +
   geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
@@ -15,7 +15,7 @@ pats_weather_data |>
     legend.position = "top"
   )
 
-pats_weather_data |> 
+pats_temp_data |> 
   ggplot(aes(x = wins_per_month, y = monthly_mean_temp)) +
   geom_bar(stat = "summary", fun = "mean", fill = "darkred", color = "black", alpha = 0.7) +
   labs(x = "Wins per Month", y = "Monthly Mean Temperature") +
@@ -27,14 +27,14 @@ pats_weather_data |>
   )
 
 
-pats_weather_data <- pats_weather_data |> 
+pats_temp_data <- pats_temp_data |> 
   relocate(pats_score) |> 
   ungroup() |> 
   group_by(month, year) |> 
   mutate(mean_pats = mean(pats_score)) |> 
   relocate(mean_pats)
 
-pats_weather_data |> 
+pats_temp_data |> 
   ggplot(aes(x = mean_pats, y = monthly_mean_temp)) +
   geom_point(color = "blue", size = 3) +
   geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
@@ -50,12 +50,14 @@ pats_weather_data |>
     legend.position = "top"
   )
 
-pats_weather_data |> 
+pats_temp_data |> 
   ungroup() |> 
   mutate(mean_pats_category = fct_collapse(factor(mean_pats),
                                             "Low Score" = c("0-19"),
                                             "Medium Score" = c("20-30"),
                                             "High Score" = c("31-")))
+
+pats_temp_data
        
          
 

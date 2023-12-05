@@ -25,6 +25,8 @@ foxboro_temp_cleaned <- foxboro_temp_cleaned |>
   filter(month == "Sep" | month == "Oct" | month == "Nov" | month == "Dec" | month == "Jan" | month == "Feb") |> 
   relocate(year, month)
 
+write_rds(foxboro_temp_cleaned, "data/temp_data.rds")
+
 #cleaning snow data
 
 foxboro_snow <- foxboro_snow |> 
@@ -43,6 +45,8 @@ snow_cleaned <- foxboro_snow |>
                           month == "Dec" | month == "Jan" | month == "Feb")) |> 
   mutate(snowfall = if_else(snowfall == "T", NA_character_, snowfall)) |> 
   rename(annual = season)
+
+write_rds(snow_cleaned, "data/snow_data.rds")
 
 #filtering elo data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
@@ -74,7 +78,6 @@ pats_elo_data <- pats_elo_data |>
          qb_value_post, qbelo_post, quality, importance, total_rating, score1, score2, winner, playoff, pats_score) 
 
 
-
 #Summarizing data by month for the elo data set to so I can analyze using monthly temp trends
 
 monthly_pats_elo <- pats_elo_data |> 
@@ -95,6 +98,8 @@ monthly_pats_elo <- pats_elo_data |>
   mutate(month = month.abb[month]) |> 
   mutate(wins_per_month = as_factor(wins_per_month))
 
+write_rds(monthly_pats_elo, "data/elo_data.rds")
+
 
 #Filtering nfl_games data set
 
@@ -107,4 +112,4 @@ pats_games <- nfl_games |>
   mutate(season = as.character(season)) |> 
   relocate(season, month)
 
-
+write_rds(pats_games, "data/game_data.rds")
