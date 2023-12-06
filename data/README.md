@@ -10,7 +10,11 @@ The data sets and codebooks are:
 - `rain_data.rds`
 - `snow_data.rds`
 - `temp_data.rds`
-
+- `elo_codebook.txt`
+- `games_codebook.txt`
+- `rain_codebook.txt`
+- `snow_codebook.txt`
+- `temp_codebook.txt`
 
 [^readme--1]: <https://github.com/fivethirtyeight/data/tree/master/nfl-elo>
 
