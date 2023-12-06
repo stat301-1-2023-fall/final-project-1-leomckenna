@@ -1,6 +1,6 @@
 ## **Cleaned datasets and codebooks**
 
-This folder contains contains both the cleaned data sets converted into .rds files as well as the code books for each of the five sets of data used. The code books for elo_data[^readme--1] and game_data[^readme--2] are both taken directly from the FiveThirtyEight Github page, as they were already provided with the data. 
+This folder contains both the cleaned data sets converted into .rds files as well as the code books for each of the five sets of data used. The code books for elo_data[^readme--1] and game_data[^readme--2] are both taken directly from the FiveThirtyEight Github page, as they were already provided with the data. 
 
 The data sets and codebooks are:
 

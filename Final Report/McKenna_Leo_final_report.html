@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leo McKenna">
-<meta name="dcterms.date" content="2023-12-05">
+<meta name="dcterms.date" content="2023-12-06">
 
 <title>How Weather Has Affected the Outcomes of Patriots Games Since 2000</title>
 <style>
@@ -2987,7 +2987,23 @@ vertical-align: -.125em;
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><strong>Introduction</strong></a></li>
+  <li><a href="#data-overview-quality" id="toc-data-overview-quality" class="nav-link" data-scroll-target="#data-overview-quality"><strong>Data Overview &amp; Quality</strong></a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><strong>Exploratory Data Analysis</strong></a>
+  <ul class="collapse">
+  <li><a href="#univariate-analysis" id="toc-univariate-analysis" class="nav-link" data-scroll-target="#univariate-analysis"><strong>Univariate Analysis</strong></a></li>
+  </ul></li>
+  <li><a href="#plot-2-bar-plot-for-monthly-mean-temperature" id="toc-plot-2-bar-plot-for-monthly-mean-temperature" class="nav-link" data-scroll-target="#plot-2-bar-plot-for-monthly-mean-temperature">Plot 2: Bar plot for monthly mean temperature</a>
+  <ul class="collapse">
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><strong>Conclusion</strong></a></li>
+  <li><a href="#references-if-needed" id="toc-references-if-needed" class="nav-link" data-scroll-target="#references-if-needed"><strong>References — if needed</strong></a></li>
+  </ul></li>
+  </ul>
+</nav>
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -3011,7 +3027,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 5, 2023</p>
+      <p class="date">December 6, 2023</p>
     </div>
   </div>
   
@@ -3034,16 +3050,44 @@ Github Repo Link
 <p><a href="https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git">https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git</a></p>
 </div>
 </div>
-<p><strong>Introduction</strong></p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction"><strong>Introduction</strong></h2>
 <p>I chose to look for a relationship between weather and the outcomes of Patriots games for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind. There are so many interesting, complex events in the NFL that statistics and data science could give insight to. One of those questions is the one I ask in this report. Is it really true that the Patriots play better than other teams in the cold? It makes sense that they would because they play in the freezing cold more than many other teams in the league.</p>
 <p>Secondly, I have been playing in Scrabble Tournaments since I was in middle school, and in competitive Scrabble, the ELO rating system is used. However, I know almost nothing about it, and so I was hoping this nfl_elo data set would shed some light on how ELO works and changes based on game outcomes.</p>
-<p><strong>Data Overview &amp; Quality</strong> The data I collected from FiveTHirtyEight was</p>
-<p>table_output &lt;- kable(pats_weather_data, format = “html”, caption = “Patriot Weather Data”)</p>
-<p>print(table_output)</p>
-<p><strong>Exploratory Data Analysis</strong></p>
-<p><strong>Conclusion</strong> I am definitely surprised at the results of my exploratory data analysis. I figured there would be a strong negative correlation between temperature and success, but the</p>
-<p><strong>References — if needed</strong></p>
-<p><strong>Appendix: Extra Exploratory Data Analysis</strong></p>
+</section>
+<section id="data-overview-quality" class="level2">
+<h2 class="anchored" data-anchor-id="data-overview-quality"><strong>Data Overview &amp; Quality</strong></h2>
+<p>The data I collected from FiveTHirtyEight was</p>
+</section>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis"><strong>Exploratory Data Analysis</strong></h2>
+<section id="univariate-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="univariate-analysis"><strong>Univariate Analysis</strong></h3>
+<p>annual_rain_line_plot &lt;- rain_cleaned |&gt; ggplot(aes(as.Date(paste(year, month, “01”), format = “%Y %b %d”),annual_mean_rain)) + geom_line(color = “darkblue”, size = 1.5) + labs(x = “Time”, y = “Annual Mean Rain”, title = “Annual Mean Rain in Foxboro From 2000-2020”) + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1),<br>
+plot.title = element_text(hjust = 0.5),<br>
+axis.title = element_text(face = “bold”)) ggsave(“2_figures and tables/annual_rain_line_plot.png”, annual_rain_line_plot)</p>
+<p>monthly_rain_line_plot &lt;- rain_cleaned |&gt; ggplot(aes(as.Date(paste(year, month, “01”), format = “%Y %b %d”), monthly_mean_rain)) + geom_line(color = “darkblue”, size = 0.5) + labs(x = “Time”, y = “Mean Monthly Precipitation”, title = “Mean Monthly Precipitation in Foxboro From 2000-2020”) + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1),<br>
+plot.title = element_text(hjust = 0.5),<br>
+axis.title = element_text(face = “bold”)) ggsave(“2_figures and tables/monthly_rain_line_plot.png”, monthly_rain_line_plot)</p>
+<p>#Analyzing temperature data # Plot 1: Bar plot for annual mean temperature temp_cleaned |&gt; ggplot(aes(as.factor(year), annual_mean_temp)) + geom_bar(stat = “summary”, fun = “mean”, fill = “darkred”, color = “black”, alpha = 0.7) + labs(x = “Year”, y = “Annual Mean Temperature”, title = “Annual Mean Temperature in FoxboroFrom 2000-2023”) + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))</p>
+</section>
+</section>
+<section id="plot-2-bar-plot-for-monthly-mean-temperature" class="level1">
+<h1>Plot 2: Bar plot for monthly mean temperature</h1>
+<p>month_order &lt;- c(“Jan”, “Feb”, “Mar”, “Apr”, “May”, “Jun”, “Jul”, “Aug”, “Sep”, “Oct”, “Nov”, “Dec”) temp_cleaned |&gt; ggplot(aes(x = factor(month, levels = month_order), y = monthly_mean_temp)) + geom_bar(stat = “summary”, fun = “mean”, fill = “darkred”, color = “black”, alpha = 0.7) + labs(x = “Month”, y = “Monthly Mean Temperature”, title = “Monthly Mean Temperature in Foxboro from 2000-2023”) + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))</p>
+<p>#Analyzing snow data - FIX annual_snow_plot &lt;- snow_cleaned |&gt; ggplot(aes(year, annual_snowfall, group = 1)) + geom_line() + geom_point() + labs(title = “Annual Snowfall From 2000-2022”, x = “Year”, y = “Annual Snowfall (inches)”) + theme_minimal() ggsave(“2_figures and tables/annual_snow_plot.png”, annual_snow_plot)</p>
+<p>monthly_snow_facet_plot &lt;- snow_cleaned |&gt; filter(!is.na(snowfall)) |&gt; ggplot(aes(month, snowfall, group = year, color = year)) + geom_line() + geom_point() + facet_wrap(~year, scales = “free_y”, ncol = 4) + labs(title = “Monthly Snowfall From 2000-2022”, x = “Month”, y = “Snowfall (inches)”) + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) ggsave(“2_figures and tables/monthly_snow_facet_plot.png”, monthly_snow_facet_plot)</p>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion"><strong>Conclusion</strong></h2>
+<p>I am definitely surprised at the results of my exploratory data analysis. I figured there would be a strong negative correlation between temperature and success, but the results were mostly inconclusive. I found a slight correlation between an increase in rain and snow and wins for the Patriots, but</p>
+</section>
+<section id="references-if-needed" class="level2">
+<h2 class="anchored" data-anchor-id="references-if-needed"><strong>References — if needed</strong></h2>
+<p>https://github.com/fivethirtyeight/data/tree/master/nfl-elo</p>
+<p>https://github.com/nflverse/nfldata/blob/master/DATASETS.md#games</p>
+<p>https://www.weather.gov/wrh/Climate?wfo=box</p>
+</section>
+</section>
 
 </main>
 <!-- /main column -->

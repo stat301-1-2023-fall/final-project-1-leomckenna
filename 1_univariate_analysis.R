@@ -14,7 +14,7 @@ annual_rain_line_plot <- rain_cleaned |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1),  
         plot.title = element_text(hjust = 0.5),             
         axis.title = element_text(face = "bold"))
-ggsave("2_figures and tables/annual_rain_line_plot.png", annual_rain_line_plot)
+ggsave("figures and tables/annual_rain_line_plot.png", annual_rain_line_plot)
 
 monthly_rain_line_plot <- rain_cleaned |> 
   ggplot(aes(as.Date(paste(year, month, "01"), format = "%Y %b %d"), monthly_mean_rain)) +
@@ -24,7 +24,7 @@ monthly_rain_line_plot <- rain_cleaned |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1),  
         plot.title = element_text(hjust = 0.5),             
         axis.title = element_text(face = "bold"))
-ggsave("2_figures and tables/monthly_rain_line_plot.png", monthly_rain_line_plot) 
+ggsave("figures and tables/monthly_rain_line_plot.png", monthly_rain_line_plot) 
 
 #Analyzing temperature data
 # Plot 1: Bar plot for annual mean temperature
@@ -44,28 +44,8 @@ temp_cleaned |>
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-#Analyzing snow data - FIX
-annual_snow_plot <- snow_cleaned |> 
-  ggplot(aes(year, annual_snowfall, group = 1)) +
-  geom_line() +
-  geom_point() +
-  labs(title = "Annual Snowfall From 2000-2022", x = "Year", y = "Annual Snowfall (inches)") +
-  theme_minimal()
-ggsave("2_figures and tables/annual_snow_plot.png", annual_snow_plot) 
+#Analyzing snow data
 
-monthly_snow_facet_plot <- snow_cleaned |> 
-  filter(!is.na(snowfall)) |> 
-  ggplot(aes(month, snowfall, group = year, color = year)) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~year, scales = "free_y", ncol = 4) +
-  labs(title = "Monthly Snowfall From 2000-2022", x = "Month", y = "Snowfall (inches)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-ggsave("2_figures and tables/monthly_snow_facet_plot.png", monthly_snow_facet_plot) 
-
-#Analyzing elo and games data
-monthly_pats_elo
 
 
 

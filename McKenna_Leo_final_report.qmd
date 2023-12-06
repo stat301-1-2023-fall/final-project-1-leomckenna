@@ -1,0 +1,53 @@
+---
+title: "How Weather Has Affected the Outcomes of Patriots Games Since 2000"
+subtitle: "Data Science 1 with R (STAT 301-1)"
+author: "Leo McKenna"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+
+execute:
+  warning: false
+  
+from: markdown+emoji 
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git](https://github.com/stat301-1-2023-fall/final-project-1-leomckenna.git)
+
+:::
+
+**Introduction**
+
+I chose to look for a relationship between weather and the outcomes of Patriots games for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind. There are so many interesting, complex events in the NFL that statistics and data science could give insight to. One of those questions is the one I ask in this report. Is it really true that the Patriots play better than other teams in the cold? It makes sense that they would because they play in the freezing cold more than many other teams in the league. 
+
+Secondly, I have been playing in Scrabble Tournaments since I was in middle school, and in competitive Scrabble, the ELO rating system is used. However, I know almost nothing about it, and so I was hoping this nfl_elo data set would shed some light on how ELO works and changes based on game outcomes. 
+
+**Data Overview & Quality**
+The data I collected from FiveTHirtyEight was 
+
+
+
+
+**Exploratory Data Analysis**
+
+
+
+
+**Conclusion**
+I am definitely surprised at the results of my exploratory data analysis. I figured there would be a strong negative correlation between temperature and success, but the data proved otherwise. The correlation between wins and both average snow per month and average rain per month were very slightly negative.
+
+
+
+
+**References — if needed**
+
+
