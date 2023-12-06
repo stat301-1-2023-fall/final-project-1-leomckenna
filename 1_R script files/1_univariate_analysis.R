@@ -50,8 +50,22 @@ annual_snow_plot <- snow_cleaned |>
   geom_line() +
   geom_point() +
   labs(title = "Annual Snowfall From 2000-2022", x = "Year", y = "Annual Snowfall (inches)") +
-  theme_minimal()
+  theme_minimal() +
+  scale_x_discrete(labels = function(x) paste0("'", substr(x, 3, 4)))
 ggsave("2_figures and tables/annual_snow_plot.png", annual_snow_plot) 
+
+snow_cleaned |> 
+  ggplot(aes(year, annual_snowfall, group = 1)) +
+  geom_line(color = "steelblue") +
+  geom_point(color = "steelblue") +
+  geom_text(aes(label = annual_snowfall), vjust = -0.5, color = "darkred", size = 3) +
+  labs(
+    title = "Annual Snowfall from 2000-2022",
+    x = "Year",
+    y = "Annual Snowfall (inches)"
+  ) +
+  theme_minimal() +
+  scale_x_discrete(labels = function(x) paste0("'", substr(x, 3, 4)))
 
 monthly_snow_facet_plot <- snow_cleaned |> 
   filter(!is.na(snowfall)) |> 
@@ -60,14 +74,37 @@ monthly_snow_facet_plot <- snow_cleaned |>
   geom_point() +
   facet_wrap(~year, scales = "free_y", ncol = 4) +
   labs(title = "Monthly Snowfall From 2000-2022", x = "Month", y = "Snowfall (inches)") +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave("2_figures and tables/monthly_snow_facet_plot.png", monthly_snow_facet_plot) 
 
 #Analyzing elo and games data
-monthly_pats_elo
+monthly_wins_facet_plot <- monthly_pats_elo |> 
+  filter(!is.na(wins_per_month)) |> 
+  ggplot(aes(month, wins_per_month, group = year, color = year)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~year, scales = "free_y", ncol = 4) +
+  labs(title = "Wins Per Month From 2000-2022", x = "Month", y = "Wins") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("2_figures and tables/monthly_wins_facet_plot.png", monthly_wins_facet_plot) 
 
+avg_score_facet_plot <- monthly_pats_elo |> 
+  filter(!is.na(avg_score)) |> 
+  ggplot(aes(month, avg_score, group = year, color = year)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~year, scales = "free_y", ncol = 4) +
+  labs(title = "Average Score Per Month From 2000-2022", x = "Month", y = "Wins") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("2_figures and tables/avg_score_facet_plot.png", avg_score_facet_plot)
 
-
-
+avg_wind_facet_plot <- pats_games |> 
+  filter(!is.na(wind_per_month)) |> 
+  ggplot(aes(month, wind_per_month, group = year, color = year)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~year, scales = "free_y", ncol = 4) +
+  labs(title = "Average Wind Per Month From 2000-2022", x = "Month", y = "Wind") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("2_figures and tables/avg_wind_facet_plot.png", avg_wind_facet_plot)
 

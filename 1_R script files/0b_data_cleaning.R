@@ -140,12 +140,10 @@ monthly_pats_elo <- pats_elo_data |>
   relocate(year, month, winner) |> 
   group_by(year, month, season, winner, playoff) |> 
   mutate(wins_per_month = sum(winner == "NE"),
-         avg_score = mean(pats_score)) |> 
-  group_by(year, month, season) |> 
-  mutate(elo_pre_per_month = mean(elo_pre),
+         avg_score = mean(pats_score),
+         elo_pre_per_month = mean(elo_pre),
          elo_post_per_month = mean(elo_post)) |> 
   ungroup() |> 
-  relocate(wins_per_month, elo_pre_per_month, elo_post_per_month)|> 
   mutate(year = as.character(year)) |> 
   mutate(month = month.abb[month]) |> 
   mutate(wins_per_month = as_factor(wins_per_month))

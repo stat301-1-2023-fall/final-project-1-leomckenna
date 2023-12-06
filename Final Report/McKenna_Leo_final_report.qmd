@@ -46,11 +46,9 @@ I chose to look for a relationship between weather and the outcomes of Patriots 
 Secondly, I have been playing in Scrabble Tournaments since I was in middle school, and in competitive Scrabble, the ELO rating system is used. However, I know almost nothing about it, and so I was hoping this nfl_elo data set would shed some light on how ELO works and changes based on game outcomes. 
 
 ## **Data Overview & Quality**
-The data I collected from FiveTHirtyEight was 
+The data I collected from FiveTHirtyEight, namely the nfl_elo.csv and nfl_games.csv data sets, were already collected and well cleaned and had their own code books. The nfl_elo.csv did have a lot of explicit missingness issues, because it keeps track of variables that have only begun being calculated in recent years. To offset this, I chose to study data from only this century so that this problem would not linger. There are 33 total variables, 27 numeric and 6 categorical,  and 17,379 observations dating back to 1920. The nfl_games.csv data set included a lot of superfluous variables that I did not care about. However, it does contain some data that was implicitly missing from the nfl_elo.csv data set. The ELO data did not contain any information about the location or stadiums of the games, the coaches or referees of each game, the week of the NFL season in which each game happened, or any observations about the weather from any of the games. So while the ELO data didn't need any cleaning, it was hard to actually do any of the analysis I wanted to without first joining it with the games data set.
 
-
-
-
+The three weather data sets that I downloaded from the National Oceanic and Atmospheric Administration's Data on the National Weather Service's website came as .pdf files, and there were certainly some issues with the data. First of all, it was in an odd format, so I had to convert all of it to .csv files and then clean the data so I could get rid of information I didn't need and put it in a format that I could analyze. Secondly, the data from 2000-2023 for all three data sets, i.e. the data about rain, temperature, and weather, had a surprising amount of missingness issues. There were full months in which the weather service had not collected any data about these three metrics from the weather tower in Foxboro.
 
 ## **Exploratory Data Analysis**
 ### **Univariate Analysis**
