@@ -1,6 +1,6 @@
 ## **Cleaned datasets and codebooks**
 
-This folder contains both the cleaned data sets converted into .rds files as well as the code books for each of the five sets of data used. The code books for elo_data[^readme--1] and game_data[^readme--2] are both taken directly from the FiveThirtyEight Github page, as they were already provided with the data. 
+This folder contains both the cleaned data sets as .csv files and converted into .rds files as well as the code books for each of the five sets of data used. The code books for elo_data[^readme--1] and game_data[^readme--2] are both taken directly from the FiveThirtyEight Github page, as they were already provided with the data. 
 
 The data sets and codebooks are:
 
@@ -10,6 +10,12 @@ The data sets and codebooks are:
 - `rain_data.rds`
 - `snow_data.rds`
 - `temp_data.rds`
+- `elo_data.csv`
+- `game_data.csv`
+- `pats_weather_data.csv`
+- `rain_data.csv`
+- `snow_data.csv`
+- `temp_data.csv`
 - `elo_codebook.txt`
 - `games_codebook.txt`
 - `rain_codebook.txt`
