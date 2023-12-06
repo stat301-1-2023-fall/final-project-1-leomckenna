@@ -1,0 +1,40 @@
+---
+title: "Executive Summary of Report"
+subtitle: "Data Science 1 with R (STAT 301-1)"
+author: "Leo McKenna"
+date: today
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+
+execute:
+  warning: false
+  
+from: markdown+emoji 
+---
+
+## **Overview**
+
+The main goal of this project was to determine whether the Patriots had a leg up against other teams in the cold weather. This idea occurred to me when I was watching a Patriots game and the announcer talked about the fact that New England are always a hard team to face, but especially so in the freezing cold and snow of Foxboro, Massachusetts. I realized that, through data, I could truly get to the bottom of whether that is true or not.
+
+I collected data from two separate NFL related data sets which had many points of information on Patriots games since 2000, and monthly weather data from Foxboro about precipitation, temperature, and snowfall. I cleaned the data, and joined five separate data sets in order to analyze whether this trend could truly be seen in the numbers.
+
+And the result was that it could not. According to the data I collected, the general consensus that the cold weather benefits the Patriots disproportionately is untrue. I found almost no correlation between the numerical variables in my data set, meaning that snowfall, temperature, and rain had little to no effect on metrics like the Patriots average score, or wins per month. Even more surprising to me was how little effect it had on the score of the opposing teams. In fact, opponent score and the average rain per month had a positive correlation, while it had close to 0 correlation with snowfall and wind. This meant that the Patriots were not scoring more as the weather got worse, their opponents were not scoring less, and they were not winning more games. 
+
+This conclusion went against both my initial instinct as well as the generally accepted theory. So, although it is disappointing to find little correlation when I hoped I would, it is an interesting result nonetheless. The Patriots played 20 years of successful football, and changes in weather had almost no role in that success. There is, however one thing - talk about playoffs/ titans game in the snow?
+
+
+
+
+
+
+
+
+
+
+
+

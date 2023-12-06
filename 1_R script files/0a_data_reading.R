@@ -13,4 +13,13 @@ dest_file <- "data/raw/nfl_games.csv"
 download.file(url, destfile = dest_file, mode = "wb")
 nfl_games <- read_csv(dest_file)
 
+#Checking to make sure file paths exist
+file_path <- "data/game_data.rds"
+file.exists(file_path)
+
+if (file.exists(file_path)) {
+  my_data <- readr::read_rds(file_path)
+} else {
+  print("File does not exist.")
+}
 

@@ -26,7 +26,7 @@ from: markdown+emoji
 :::
 
 ```{r}
-
+#| results: hide
 library(tidyverse)
 library(knitr)
 library(skimr)
@@ -35,7 +35,7 @@ temp_cleaned <- read_rds("data/temp_data.rds")
 snow_cleaned <- read_rds("data/snow_data.rds")
 monthly_pats_elo <- read_rds("data/elo_data.rds")
 pats_games <- read_rds("data/game_data.rds")
-write_rds(pats_weather_data, "data/pats_weather_data.rds")
+pats_weather_data <- read_rds("data/pats_weather_data.rds")
 ```
 
 
@@ -58,6 +58,7 @@ I began my EDA by exploring the distributions of each individual variable I care
 
 The rain_data.rds data set has two important variables to look at: annual_precipitation, and monthly_precipitation. The distribution of these two variables over the time frame 2000 to 2020 look like this:
 ```{r}
+#| results: hide
 rain_cleaned |> 
   ggplot(aes(as.Date(paste(year, month, "01"), format = "%Y %b %d"),annual_mean_rain)) +
   geom_line(color = "darkblue", size = 1.5) +
@@ -69,6 +70,7 @@ rain_cleaned |>
 ```
 
 ```{r}
+#| results: hide
 rain_cleaned |> 
   ggplot(aes(as.Date(paste(year, month, "01"), format = "%Y %b %d"), monthly_mean_rain)) +
   geom_line(color = "darkblue", size = 0.5) +
@@ -78,10 +80,13 @@ rain_cleaned |>
         plot.title = element_text(hjust = 0.5),             
         axis.title = element_text(face = "bold"))
 ```
+The first plot tells us that 
+The second plot tells us that
 
+Next I looked at the temp_data.rds data set, and again looked for trends over time in the annual_mean_temp and monthly_mean_temp variables. Those plots look like this:
 
-
-#Analyzing temperature data
+```{r}
+#| results: hide
 # Plot 1: Bar plot for annual mean temperature
 temp_cleaned |> 
   ggplot(aes(as.factor(year), annual_mean_temp)) +
@@ -89,7 +94,10 @@ temp_cleaned |>
   labs(x = "Year", y = "Annual Mean Temperature", title = "Annual Mean Temperature in FoxboroFrom 2000-2023") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
+```{r}
+#| results: hide
 # Plot 2: Bar plot for monthly mean temperature
 month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 temp_cleaned |> 
@@ -98,17 +106,28 @@ temp_cleaned |>
   labs(x = "Month", y = "Monthly Mean Temperature", title = "Monthly Mean Temperature in Foxboro from 2000-2023") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Again, what we can glean from these plots is that: blah. This is backed up by the summary statisic calculations that I did for this data set:
 
-#Analyzing snow data - FIX
-annual_snow_plot <- snow_cleaned |> 
+Insert table
+
+This shows us that blah.
+
+Finally, I looked at the annual and monthly snowfall in the snow_data.rds data set:
+
+```{r}
+#| results: hide
+ snow_cleaned |> 
   ggplot(aes(year, annual_snowfall, group = 1)) +
   geom_line() +
   geom_point() +
   labs(title = "Annual Snowfall From 2000-2022", x = "Year", y = "Annual Snowfall (inches)") +
   theme_minimal()
-ggsave("2_figures and tables/annual_snow_plot.png", annual_snow_plot) 
+```
 
-monthly_snow_facet_plot <- snow_cleaned |> 
+```{r}
+#| results: hide
+snow_cleaned |> 
   filter(!is.na(snowfall)) |> 
   ggplot(aes(month, snowfall, group = year, color = year)) +
   geom_line() +
@@ -117,7 +136,13 @@ monthly_snow_facet_plot <- snow_cleaned |>
   labs(title = "Monthly Snowfall From 2000-2022", x = "Month", y = "Snowfall (inches)") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-ggsave("2_figures and tables/monthly_snow_facet_plot.png", monthly_snow_facet_plot) 
+```
+
+
+
+
+
+
 
 
 
