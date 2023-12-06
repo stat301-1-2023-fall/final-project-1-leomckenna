@@ -1,22 +1,29 @@
-#cleaning temp data
+##Cleaning temp data ----
+#removing unnecessary rows and columns
 foxboro_temp_cleaned <- foxboro_temp |> 
   select(-c(1, 16)) |> 
   slice(-c(1, 23, 24, 25, 26, 32)) |> 
   slice(-27)
 
+#pivoting data
 foxboro_temp_cleaned <- foxboro_temp_cleaned |> 
   setNames(foxboro_temp_cleaned[1, ]) |> 
   slice(-1) |> 
   pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
   rename(annual_mean_temp = Annual, monthly_mean_temp = Value)
 
-foxboro_temp_cleaned$monthly_mean_temp[foxboro_temp_cleaned$monthly_mean_temp == "M"] <- NA
-foxboro_temp_cleaned$monthly_mean_temp <- as.numeric(foxboro_temp_cleaned$monthly_mean_temp)
+#Making the M's into NA values
+foxboro_temp_cleaned <- foxboro_temp_cleaned %>%
+  mutate(
+    monthly_mean_temp = as.numeric(ifelse(monthly_mean_temp == "M", NA, monthly_mean_temp)),
+  )
 
+#Making columns lowercase
 foxboro_temp_cleaned <- foxboro_temp_cleaned |>   
   group_by(Year) |> 
   rename_all(tolower) 
 
+#Filtering out unneeded observations
 foxboro_temp_cleaned <- foxboro_temp_cleaned |>
   ungroup() |> 
   slice(-c(241:300)) |> 
@@ -25,27 +32,36 @@ foxboro_temp_cleaned <- foxboro_temp_cleaned |>
   filter(month == "Sep" | month == "Oct" | month == "Nov" | month == "Dec" | month == "Jan" | month == "Feb") |> 
   relocate(year, month)
 
+#Saving as an rds
 write_rds(foxboro_temp_cleaned, "data/temp_data.rds")
 
-#cleaning rain data
+##Cleaning rain data ----
+#removing unnecessary rows and columns
 foxboro_rain_cleaned <- foxboro_rain |> 
   select(-c(1, 16)) |> 
   slice(-c(1, 23, 24, 25, 26, 32)) |> 
   slice(-27)
 
+#pivoting data
 foxboro_rain_cleaned <- foxboro_rain_cleaned |> 
   setNames(foxboro_rain_cleaned[1, ]) |> 
   slice(-1) |> 
   pivot_longer(cols = -c(Year, Annual), names_to = "Month", values_to = "Value") |> 
   rename(annual_mean_rain = Annual, monthly_mean_rain = Value)
 
-foxboro_rain_cleaned$monthly_mean_rain[foxboro_rain_cleaned$monthly_mean_rain == "M"] <- NA
-foxboro_rain_cleaned$monthly_mean_rain <- as.numeric(foxboro_rain_cleaned$monthly_mean_rain)
+#Making the M's into NA values
+foxboro_rain_cleaned <- foxboro_rain_cleaned %>%
+  mutate(
+    annual_mean_rain = as.numeric(ifelse(annual_mean_rain == "M", NA, annual_mean_rain)),
+    monthly_mean_rain = as.numeric(ifelse(monthly_mean_rain == "M", NA, monthly_mean_rain)),
+  )
 
+#Making columns lowercase
 foxboro_rain_cleaned <- foxboro_rain_cleaned |>   
   group_by(Year) |> 
   rename_all(tolower) 
 
+#Filtering out unneeded observations
 foxboro_rain_cleaned <- foxboro_rain_cleaned |>
   ungroup() |> 
   slice(-c(241:300)) |> 
@@ -54,13 +70,18 @@ foxboro_rain_cleaned <- foxboro_rain_cleaned |>
   filter(month == "Sep" | month == "Oct" | month == "Nov" | month == "Dec" | month == "Jan" | month == "Feb") |> 
   relocate(year, month)
 
+#Saving as an rds
 write_rds(foxboro_rain_cleaned, "data/rain_data.rds")
 
-#cleaning snow data
+
+
+##Cleaning snow data ----
+#removing unnecessary rows and columns
 foxboro_snow <- foxboro_snow |> 
   select(-c(1, 16)) |> 
   slice(-c(1, 27:33)) 
 
+#Pivoting and filter only columns I need
 snow_cleaned <- foxboro_snow |> 
   setNames(foxboro_snow[1, ]) |> 
   slice(-1) |> 
@@ -74,8 +95,10 @@ snow_cleaned <- foxboro_snow |>
   mutate(snowfall = if_else(snowfall == "T", NA_character_, snowfall)) |> 
   rename(annual_snowfall = season)
 
+#Saving as an rds file
 write_rds(snow_cleaned, "data/snow_data.rds")
 
+##Cleaning ELO data ----
 #filtering elo data and getting rid of unnecessary teams
 pats_elo_data <- nfl_elo_data |> 
   filter(season >= 2000, team1 == "NE" | team2 == "NE") |> 
@@ -85,6 +108,7 @@ pats_elo_data <- nfl_elo_data |>
   mutate(pats_score = if_else(team1 == "NE", score1, if_else(team2 == "NE", score2, NA_real_))) |> 
   select(date, season, winner, everything())
 
+#Focusing on Patriots data
 pats_elo_data <- pats_elo_data |> 
   filter(team1 == "NE" | team2 == "NE") |> 
   mutate(
@@ -107,7 +131,6 @@ pats_elo_data <- pats_elo_data |>
 
 
 #Summarizing data by month for the elo data set to so I can analyze using monthly trends
-
 monthly_pats_elo <- pats_elo_data |> 
   mutate(season = as.character(season),
          year = year(date),
@@ -127,11 +150,10 @@ monthly_pats_elo <- pats_elo_data |>
   mutate(month = month.abb[month]) |> 
   mutate(wins_per_month = as_factor(wins_per_month))
 
-
+#Saving elo data as an rds
 write_rds(monthly_pats_elo, "data/elo_data.rds")
 
-#Filtering nfl_games data set
-
+#Cleaning nfl_games data set----
 pats_games <- nfl_games |> 
   select(season, game_id, gameday, away_team, temp, wind, stadium_id, referee, overtime, week) |> 
   filter(str_detect(stadium_id, "BOS") & season > 1999) |> 
@@ -145,4 +167,5 @@ pats_games <- nfl_games |>
   select(-c(1, 6,7)) |> 
   relocate(year, month)
 
+#Saving game data as an rds file
 write_rds(pats_games, "data/game_data.rds")

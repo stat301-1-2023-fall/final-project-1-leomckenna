@@ -24,3 +24,5 @@ pats_temp_data <- monthly_pats_elo |>
 pats_weather_data <- pats_temp_data |> 
   left_join(snow_cleaned, by = join_by(year, month)) |> 
   left_join(rain_cleaned, by = join_by(year, month))
+
+write_rds(pats_weather_data, "data/pats_weather_data.rds")
