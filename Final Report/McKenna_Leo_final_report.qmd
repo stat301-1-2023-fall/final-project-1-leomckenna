@@ -26,24 +26,27 @@ from: markdown+emoji
 :::
 
 ```{r}
-#| results: hide
+#| echo: false
 library(tidyverse)
 library(knitr)
 library(skimr)
-rain_cleaned <- read_rds("data/rain_data.rds")
-temp_cleaned <- read_rds("data/temp_data.rds")
-snow_cleaned <- read_rds("data/snow_data.rds")
-monthly_pats_elo <- read_rds("data/elo_data.rds")
-pats_games <- read_rds("data/game_data.rds")
-pats_weather_data <- read_rds("data/pats_weather_data.rds")
+library(ggcorrplot)
+#read in data
+setwd("/Users/leomckenna/Desktop/stat-301-1/final-project-1-leomckenna")
+rain_cleaned <- read_csv("data/rain_data.csv")
+temp_cleaned <- read_csv("data/temp_data.csv")
+snow_cleaned <- read_csv("data/snow_data.csv")
+monthly_pats_elo <- read_csv("data/elo_data.csv")
+pats_games <- read_csv("data/game_data.csv")
+pats_weather_data <- read_csv("data/pats_weather_data.csv")
 ```
-
 
 ## **Introduction**
 
 I chose to look for a relationship between weather and the outcomes of Patriots games for a few reasons. Firstly, I’m a lifelong football fan, and I think the statistical side of the sport is largely unexplored. In the last few decades there has been an explosion of statistical study in sports like baseball, but football has been lagging behind. There are so many interesting, complex events in the NFL that statistics and data science could give insight to. One of those questions is the one I ask in this report. Is it really true that the Patriots play better than other teams in the cold? It makes sense that they would because they play in the freezing cold more than many other teams in the league. 
 
-Secondly, I have been playing in Scrabble Tournaments since I was in middle school, and in competitive Scrabble, the ELO rating system is used. However, I know almost nothing about it, and so I was hoping this nfl_elo data set would shed some light on how ELO works and changes based on game outcomes. 
+Secondly, I have been playing in Scrabble Tournaments since I was in middle school, and in competitive Scrabble, the ELO rating system is used. However, I know almost nothing about it, and so I was hoping this nfl_elo data set would shed some light on how ELO works and changes based on game outcomes. The nfl_elo data set itself, as well as the nfl_games data set came from the FiveThirtyEight Github. The ELO data set contains ELO ratings from all NFL games dating back to 1920[^https://github.com/fivethirtyeight/data/tree/master/nfl-elo], and the games data set includes other important variables I used such as the stadium and location of every game.[^https://github.com/nflverse/nfldata/blob/master/DATASETS.md#games]
+The other three data sets are .csvs which I converted from .pdf files I downloaded from the National Oceanic and Atmospheric Administration's Data on the National Weather Service's website. The data shows monthly temperatures, precipitation levels, and snowfall levels from the Foxboro weather tower starting in the year 2000.[^https://www.weather.gov/wrh/Climate?wfo=box]
 
 ## **Data Overview & Quality**
 The data I collected from FiveTHirtyEight, namely the nfl_elo.csv and nfl_games.csv data sets, were already collected and well cleaned and had their own code books. The nfl_elo.csv did have a lot of explicit missingness issues, because it keeps track of variables that have only begun being calculated in recent years. To offset this, I chose to study data from only this century so that this problem would not linger. There are 33 total variables, 27 numeric and 6 categorical,  and 17,379 observations dating back to 1920. The nfl_games.csv data set included a lot of superfluous variables that I did not care about. However, it does contain some data that was implicitly missing from the nfl_elo.csv data set. The ELO data did not contain any information about the location or stadiums of the games, the coaches or referees of each game, the week of the NFL season in which each game happened, or any observations about the weather from any of the games. So while the ELO data didn't need any cleaning, it was hard to actually do any of the analysis I wanted to without first joining it with the games data set.
@@ -54,9 +57,9 @@ The three weather data sets that I downloaded from the National Oceanic and Atmo
 ### **Univariate Analysis**
 I began my EDA by exploring the distributions of each individual variable I cared about. I started with the three data sets related to weather, namely rain_data.rds, temp_data.rds and snow_data.rds.
 
-The rain_data.rds data set has two important variables to look at: annual_precipitation, and monthly_precipitation. The distribution of these two variables over the time frame 2000 to 2020 look like this:
+The rain_data.rds data set has two important variables to look at: annual_mean_rain, and monthly_mean_rean. The distribution of these two variables over the time frame 2000 to 2020 look like this:
 ```{r}
-#| results: hide
+#| echo: false
 rain_cleaned |> 
   ggplot(aes(as.Date(paste(year, month, "01"), format = "%Y %b %d"),annual_mean_rain)) +
   geom_line(color = "darkblue", size = 1.5) +
@@ -68,7 +71,7 @@ rain_cleaned |>
 ```
 
 ```{r}
-#| results: hide
+#| echo: false
 rain_cleaned |> 
   ggplot(aes(as.Date(paste(year, month, "01"), format = "%Y %b %d"), monthly_mean_rain)) +
   geom_line(color = "darkblue", size = 0.5) +
@@ -78,24 +81,24 @@ rain_cleaned |>
         plot.title = element_text(hjust = 0.5),             
         axis.title = element_text(face = "bold"))
 ```
-The first plot tells us that 
-The second plot tells us that
+The annual line plot shows that the average rain per year varies greatly over time, and that it was especially high from 2006-2014, interestingly a period in which the Patriots had huge success. 
+The monthly plot shows that there is not a huge amount of variation if you compare the years, but within the years there are huge spikes and nadirs that occur sometimes one after the other. There are also two huge spikes: one in 2006 and one in 2017.
 
 Next I looked at the temp_data.rds data set, and again looked for trends over time in the annual_mean_temp and monthly_mean_temp variables. Those plots look like this:
 
 ```{r}
-#| results: hide
+#| echo: false
 # Plot 1: Bar plot for annual mean temperature
 temp_cleaned |> 
   ggplot(aes(as.factor(year), annual_mean_temp)) +
   geom_bar(stat = "summary", fun = "mean", fill = "darkred", color = "black", alpha = 0.7) +
-  labs(x = "Year", y = "Annual Mean Temperature", title = "Annual Mean Temperature in FoxboroFrom 2000-2023") +
+  labs(x = "Year", y = "Annual Mean Temperature", title = "Annual Mean Temperature in Foxboro From 2000-2020") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ```{r}
-#| results: hide
+#| echo: false
 # Plot 2: Bar plot for monthly mean temperature
 month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 temp_cleaned |> 
@@ -105,53 +108,260 @@ temp_cleaned |>
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-Again, what we can glean from these plots is that: blah. This is backed up by the summary statisic calculations that I did for this data set:
+Interestingly, the annual temperature varies a lot over the 20 year period. The average temperature has a huge spike at 2007 to 55 degrees even though two years prior, in 2005, the average temperature was over 10 degrees colder. This graph already made me worried about my initial hypothesis. The season that the Patriots went undefeated until the Super Bowl was 2007 - the hottest year of this entire period.
 
-Insert table
+The monthly plot shows that at the start of each football season, the mean temperature is the highest - in fact much higher than any of the other months. And as the season goes on, especially into the playoff months of January and February, the temperature gets colder. This told me I should look at the Patriots performances throughout the year to see if they get better or worse as time goes on and the weather cools down.
 
-This shows us that blah.
-
-Finally, I looked at the annual and monthly snowfall in the snow_data.rds data set:
-
+I also did a summary statistic analysis on the annual and mean temperature, and interestingly the values are quite different. However, this gives us a baseline of what temperature the Patriots are usually playing at, so that I can determine whether a game was much colder than the average or not.
 ```{r}
-#| results: hide
- snow_cleaned |> 
-  ggplot(aes(year, annual_snowfall, group = 1)) +
-  geom_line() +
-  geom_point() +
-  labs(title = "Annual Snowfall From 2000-2022", x = "Year", y = "Annual Snowfall (inches)") +
-  theme_minimal()
+#| echo: false
+pat_stats <- pats_weather_data |>
+  ungroup() |> 
+  mutate(wins_per_month = as.numeric(wins_per_month),
+         annual_mean_temp = as.numeric(annual_mean_temp)) |> 
+  skim_without_charts(monthly_mean_temp, annual_mean_temp)
+
+sum_stats_table <- kable(pat_stats)
+
+sum_stats_table
 ```
 
+Finally, I looked at the annual and monthly snowfall in the snow_data.rds data set:
 ```{r}
-#| results: hide
-snow_cleaned |> 
+#| echo: false
+monthly_snow_facet_plot <- snow_cleaned |> 
   filter(!is.na(snowfall)) |> 
+  mutate(snowfall = as.numeric(snowfall)) |> 
   ggplot(aes(month, snowfall, group = year, color = year)) +
   geom_line() +
   geom_point() +
   facet_wrap(~year, scales = "free_y", ncol = 4) +
   labs(title = "Monthly Snowfall From 2000-2022", x = "Month", y = "Snowfall (inches)") +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("2_figures and tables/monthly_snow_facet_plot.png", monthly_snow_facet_plot) 
 ```
 
+```{r}
+#| echo: false
+annual_snow_plot <- snow_cleaned |> 
+  mutate(annual_snowfall = as.numeric(annual_snowfall)) |> 
+  ggplot(aes(year, annual_snowfall, group = 1)) +
+  geom_line(color = "steelblue") +
+  geom_point(color = "steelblue") +
+  geom_text(aes(label = annual_snowfall), vjust = -0.5, color = "darkred", size = 3) +
+  labs(
+    title = "Annual Snowfall from 2000-2022",
+    x = "Year",
+    y = "Annual Snowfall (inches)"
+  ) +
+  theme_minimal() +
+  scale_x_discrete(labels = function(x) paste0("'", substr(x, 3, 4)))
+ggsave("2_figures and tables/annual_snow_plot.png", annual_snow_plot) 
+```
+The graph of monthly snowfall shows us that over the entire period, for the most part, the shape of the trend over the course of a year looks the same. There is a lot of variation in the average amount of snow per month. For example, in 2006, the highest mean amount of snow in a month was a mere 5 inches, while in 2014 it got up to higher than 60. This told me I should compare the Patriots production in those two years and see what the difference is. 
 
+### **Bivariate Analysis**
 
+After looking at the univariate data, I explored the link between the variables from the football data sets and those from the weather data sets to see what the correlation between them might be like. I analyzed how the three temperature metrics affected both the average score and wins per month of the Patriots during the period of interest.
 
+First I wanted to compare the very snowy year of 2014 to 2006 to see if there were any major differences, and this is the plot I produced:
 
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(year == 2006 | year == 2014) |> 
+  relocate(wins_per_month, avg_score) |> 
+  group_by(year, month) |> 
+  summarize(wins_per_month = sum(winner == "NE"), 
+            avg_score = mean(avg_score)) |> 
+  filter(year %in% c("2006", "2014")) |> 
+  ggplot(aes(x = month, y = wins_per_month, fill = factor(year))) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Wins per Month in 2006 vs. 2014",
+       x = "Month",
+       y = "Wins",
+       fill = "Year") +
+  theme_minimal()
+```
 
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(year == 2006 | year == 2014) |> 
+  relocate(wins_per_month, avg_score) |> 
+  group_by(year, month) |> 
+  summarize(wins_per_month = sum(winner == "NE"), 
+            avg_score = mean(avg_score)) |> 
+  filter(year %in% c("2006", "2014")) |> 
+  ggplot(aes(x = month, y = avg_score, fill = factor(year))) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Average Score per Month in 2006 vs. 2014",
+       x = "Month",
+       y = "Average Score",
+       fill = "Year") +
+  theme_minimal()
+```
+Interestingly, the wins per month graph shows that the number of wins in the two years was very similar. In fact, in 3 of the five months, the Patriots had the exact same amount of wins. So it seems as though the huge increase on snowfall had little impact on how many games they were winning. However, in the average score graph there is a noticeable difference. In 2014, and even in some of the especially cold and snowy months like January, the Patriots were scoring a lot more points. And not just a lot more point, a crazy amount of points in relation to the average score of an NFl game. There average score was almost 40 points in October, and although 2014 was a season in which the Patriots were very good and would go on to win a Super Bowl, it does seem that the snow had an effect on how many points the Patriots were scoring, and the opposing defenses were allowing.
 
+After learning this, I wanted to see if the temperature had any affect on Patriots scores as well, so I created this plot:
+```{r}
+#| echo: false
+pats_weather_data |> 
+  ggplot(aes(x = avg_score, y = monthly_mean_temp)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
+  labs(x = "Patriots Scores per Month", y = "Monthly Mean Temperature", title = "Relationship between Average
+       Patriots Scores
+       and Monthly Mean Temperature") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black"),
+    plot.title = element_text(hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    legend.position = "top"
+  )
+```
+The result is that there is a slight negative correlation between temperature and Patriots scores. As the mean temperature decreases, Patriots average scores go up just slightly, which is not as promising a result as I'd hoped.
 
+So I checked if temperature increased the average wins per month to see if that would conform more to what I believed to be the truth, and this is the plot I created:
+```{r}
+#| echo: false
+pats_weather_data |> 
+  ggplot(aes(x = wins_per_month, y = monthly_mean_temp)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "darkred", color = "black", alpha = 0.7) +
+  labs(x = "Wins per Month", y = "Monthly Mean Temperature") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black")
+  )
+```
+This bar plot shows in fact the opposite of what I was expecting. During the months in which the Patriots won 5 games, or the largest amount, the mean temperature was actually the highest out of all amounts of wins. So this led me to believe that although snow might have an effect on how much the Patriots are scoring, temperature has much less of a correlation, and in fact might have the opposite effect.
 
+The last temperature metric to look at is rain. Looking at average score and wins per month against the average rain per month we get:
+```{r}
+#| echo: false
+pats_weather_data |> 
+  ggplot(aes(x = wins_per_month, y = monthly_mean_rain)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "darkred", color = "black", alpha = 0.7) +
+  labs(x = "Wins per Month", y = "Monthly Mean Precipitation") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black")
+  )
+```
+
+```{r}
+#| echo: false
+pats_weather_data |> 
+  ggplot(aes(x = avg_score, y = monthly_mean_rain)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = lm, color = "darkred", fill = "black", alpha = 0.2) +
+  labs(x = "Patriots Scores per Month", y = "Monthly Precipitation", title = "Relationship between Average
+       Patriots Scores
+       and Monthly Precipitation") +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    axis.line = element_line(color = "black"),
+    text = element_text(color = "black"),
+    plot.title = element_text(hjust = 0.5),
+    axis.title = element_text(face = "bold"),
+    legend.position = "top"
+  )
+```
+These plots again tell us that rain is not highly correlated with either wins or score, and in fact is negatively correlated with score meaning that the Patriots score higher when there is less rain. This to me made more sense since rain doesn't necessarily translate to cold weather or harsh conditions, and in fact there are many other football teams who would be more accustomed to rainier climates than the Patriots.
+
+### **Multivariate Analysis
+For my multivariate analysis, I wanted to confirm the fact that rain and temperature were irrelevant variables to my conclusion at this point, so I created box plots to compare average score, wins, and temperature and rain respectively.
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(!is.na(wins_per_month) & (wins_per_month == 1) | (wins_per_month == 2) | (wins_per_month == 3) | 
+           (wins_per_month == 4)) |> 
+  ggplot(aes(wins_per_month, avg_score, fill = cut_number(monthly_mean_rain, 3))) +
+  geom_boxplot()
+```
+
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(!is.na(wins_per_month) & (wins_per_month == 1) | (wins_per_month == 2) | (wins_per_month == 3) | 
+           (wins_per_month == 4)) |> 
+  ggplot(aes(wins_per_month, avg_score, fill = cut_number(monthly_mean_temp, 3))) +
+  geom_boxplot()
+```
+Again, we see nothing helpful. No trends that really tell us that these variables have any correlation or covariance at all. But I had a theory that maybe, in games that were very cold and either really snowy or really rainy, the Patriots might have the upper hand. So I created this table using the filter() function to find games where the snowfall was strictly greater than 15, the monthly_mean_temp was less than freezing, and the average precipitation for that month was greater than 7:
+
+```{r}
+#| echo: false
+cold_stats <- pats_weather_data |> 
+  filter(snowfall > 15 & monthly_mean_temp < 32 | monthly_mean_rain > 7) 
+
+cold_stats_table <- kable(cold_stats)
+
+cold_stats_table
+```
+This table shows that my thesis was correct. In games at the extreme, i.e. that there is a lot of snow or rain and freezing cold temperatures, the Patriots perform extremely well. In fact, as a kid I remember that the Patriots biggest blowout of all time was a game against the Titans in which it was snowing and the Patriots not only shut them out, but in fact won 59-0. We can see:
+```{r}
+#| echo: false
+titans_pats <- pats_weather_data |> 
+  filter(year == 2009, away_team == "TEN") |> 
+  select(year, month, wind_per_month, monthly_mean_rain, away_team, score1, score2)
+
+titans_pats_table <- kable(titans_pats)
+
+titans_pats_table
+```
+Both the average wind and rain were abnormally high during the month that that game took place, and the Patriots were able to score almost 60 points. 
+
+So it seemed that snow had the greatest effect on the outcomes of Patriots games from 2000-2023, but just to make sure, I created a correlation plot using ggcorrplot() to see if there were any other relationships that I had missed:
+
+```{r}
+#| echo: false
+pats_corr <- pats_weather_data |> 
+  mutate(wins_per_month = as.numeric(wins_per_month),
+         snowfall = as.numeric(snowfall)
+  ) |> 
+  ungroup() |> 
+  select(where(is.numeric)) |> 
+  select(monthly_mean_temp, wind_per_month, snowfall, avg_score, qbelo_post, 
+         wins_per_month, monthly_mean_rain) |> 
+  na.omit()
+
+cor_matrix <- cor(pats_corr)
+
+ggcorrplot(cor_matrix, 
+                        hc.order = TRUE, 
+                        type = "upper", 
+                        outline.col = "white", 
+                        lab_size = 3
+)
+```
+It turns out that, in fact nothing is that strongly correlated. There is some correlation, as we found, between snow and wins and average score, but barely. In fact, a lot of the correlations are the opposite of what I had expected. This left me feeling both surprised as well as a little disappointed.
 
 ## **Conclusion**
-I am definitely surprised at the results of my exploratory data analysis. I figured there would be a strong negative correlation between temperature and success, but the results were mostly inconclusive. I found a slight correlation between an increase in rain and snow and wins for the Patriots, but 
+  I figured there would be a strong negative correlation between temperature and success, but the results were mostly inconclusive. Through my multivariate analysis, I found almost no correlation between the numerical variables in my data set, meaning that snowfall, temperature, and rain had little to no effect on metrics like the Patriots average score, or wins per month. 
+The weather also interestingly had very little sway on the score of the opposing teams. In fact, opponent score and the average rain per month had a positive correlation, while it had close to 0 correlation with snowfall and wind. Before doing this analysis, I would've believed that some of the greatest, toughest defenses coached by the greatest defensive head coach of all time, Bill Belichick, would've had a huge advantage in the cold against offenses that weren't experienced playing it. But the data showed that teams were basically scoring just as many points when it was 70 degrees and sunny as they were when it was 20 degrees and snowing.
 
+  This means that Patriots were not scoring more as the weather got worse, their opponents were not scoring less, and they were not winning more games. That is pretty damning evidence against the idea that cold weather benefits them. However, I did find one piece of evidence to support the general theory; in really, really cold, snowy games, the Patriots were winning a large majority of the time. In games with a lot of snow and temperature below freezing, the Patriots almost always came out victorious. At the most extreme values, the Patriots were winning almost every single game. This restored my faith in my own beliefs. As a Patriots fan there are many iconic games I can think in the snowy, freezing cold. For example, the Patriots biggest ever blowout came in this game against the Titans.
+  
+```{r}
+#| echo: false
+titans_pats <- pats_weather_data |> 
+  filter(year == 2009, away_team == "TEN") |> 
+  select(year, month, monthly_mean_temp, wind_per_month, monthly_mean_rain, away_team, score1, score2)
 
+titans_pats_table <- kable(titans_pats)
+```
+As you can see, the wind and the rain for that month, and in that game in particular was very high, and the temperatures were pretty cold. There are some other iconic ones including the famous snowy 'Tuck Rule' game which sent the Patriots to their first Super Bowl and ultimately Super Bowl victory. But in conclusion, the advantage that the Patriots gain from playing in colder temperatures and increased levels of snow is only noticeable when it extremely cold and/or extremely snowy and/or extremely rainy.
 
-
-## **References — if needed**
+## **References**
 https://github.com/fivethirtyeight/data/tree/master/nfl-elo
 
 https://github.com/nflverse/nfldata/blob/master/DATASETS.md#games

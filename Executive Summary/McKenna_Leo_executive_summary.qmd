@@ -19,13 +19,74 @@ from: markdown+emoji
 
 ## **Overview**
 
+```{r}
+#| echo: false
+library(tidyverse)
+library(knitr)
+library(skimr)
+library(ggcorrplot)
+#read in data
+setwd("/Users/leomckenna/Desktop/stat-301-1/final-project-1-leomckenna")
+rain_cleaned <- read_csv("data/rain_data.csv")
+temp_cleaned <- read_csv("data/temp_data.csv")
+snow_cleaned <- read_csv("data/snow_data.csv")
+monthly_pats_elo <- read_csv("data/elo_data.csv")
+pats_games <- read_csv("data/game_data.csv")
+pats_weather_data <- read_csv("data/pats_weather_data.csv")
+
+```
+
+
 The main goal of this project was to determine whether the Patriots had a leg up against other teams in the cold weather. This idea occurred to me when I was watching a Patriots game and the announcer talked about the fact that New England are always a hard team to face, but especially so in the freezing cold and snow of Foxboro, Massachusetts. I realized that, through data, I could truly get to the bottom of whether that is true or not.
 
 I collected data from two separate NFL related data sets which had many points of information on Patriots games since 2000, and monthly weather data from Foxboro about precipitation, temperature, and snowfall. I cleaned the data, and joined five separate data sets in order to analyze whether this trend could truly be seen in the numbers.
 
-And the result was that it could not. According to the data I collected, the general consensus that the cold weather benefits the Patriots disproportionately is untrue. I found almost no correlation between the numerical variables in my data set, meaning that snowfall, temperature, and rain had little to no effect on metrics like the Patriots average score, or wins per month. Even more surprising to me was how little effect it had on the score of the opposing teams. In fact, opponent score and the average rain per month had a positive correlation, while it had close to 0 correlation with snowfall and wind. This meant that the Patriots were not scoring more as the weather got worse, their opponents were not scoring less, and they were not winning more games. 
+And the result was fairly inconclusive. According to the data I collected, the general consensus that the cold weather benefits the Patriots disproportionately is generally untrue. I found almost no correlation between the numerical variables in my data set, meaning that snowfall, temperature, and rain had little to no effect on metrics like the Patriots average score, or wins per month. That can be seen in the multivariate plots:
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(!is.na(wins_per_month) & (wins_per_month == 1) | (wins_per_month == 2) | (wins_per_month == 3) | 
+           (wins_per_month == 4)) |> 
+  ggplot(aes(wins_per_month, avg_score, fill = cut_number(monthly_mean_rain, 3))) +
+  geom_boxplot()
+```
 
-This conclusion went against both my initial instinct as well as the generally accepted theory. So, although it is disappointing to find little correlation when I hoped I would, it is an interesting result nonetheless. The Patriots played 20 years of successful football, and changes in weather had almost no role in that success. There is, however one thing - talk about playoffs/ titans game in the snow?
+```{r}
+#| echo: false
+pats_weather_data |> 
+  filter(!is.na(wins_per_month) & (wins_per_month == 1) | (wins_per_month == 2) | (wins_per_month == 3) | 
+           (wins_per_month == 4)) |> 
+  ggplot(aes(wins_per_month, avg_score, fill = cut_number(monthly_mean_temp, 3))) +
+  geom_boxplot()
+```
+
+Even more surprising to me was how little effect it had on the score of the opposing teams. In fact, opponent score and the average rain per month had a positive correlation, while it had close to 0 correlation with snowfall and wind. You can see this in the correlation plot I made using ggcorrplot:
+
+```{r}
+#| echo: false
+pats_corr <- pats_weather_data |> 
+  mutate(wins_per_month = as.numeric(wins_per_month),
+         snowfall = as.numeric(snowfall)
+  ) |> 
+  ungroup() |> 
+  select(where(is.numeric)) |> 
+  select(monthly_mean_temp, wind_per_month, snowfall, avg_score, qbelo_post, 
+         wins_per_month, monthly_mean_rain) |> 
+  na.omit()
+
+cor_matrix <- cor(pats_corr)
+
+ggcorrplot(cor_matrix, 
+                        hc.order = TRUE, 
+                        type = "upper", 
+                        outline.col = "white", 
+                        lab_size = 3
+)
+```
+
+This meant that the Patriots were not scoring more as the weather got worse, their opponents were not scoring less, and they were not winning more games. However, in really, really cold, snowy games, the Patriots were winning a large majority of the time. In games with a lot of snow and temperature below freezing, the Patriots almost always came out victorious. This does mean that the weather is affecting games at its extreme values. However, there are a lot of other factors in play for these observations. For example, a lot of these extremely cold games come towards the end of the season or in the playoffs, and in these games home field advantage is a huge consideration for why these teams win. Not just because they are used to the weather and the environment, but also because they have their fans behind them. So while I do think the cold benefits the Patriots in these games, the data shows that the advantage it gives is more minimal than people believe.
+
+This conclusion went against both my initial instinct as well as the generally accepted theory. So, although it is disappointing to find little correlation when I hoped I would, it is an interesting result nonetheless. The Patriots played 20 years of successful football, and changes in weather had very little to do with that success. 
 
 
 

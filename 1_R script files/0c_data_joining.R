@@ -11,15 +11,15 @@ names(monthly_pats_elo) |>
   intersect(names(temp_cleaned))
 
 #joining the three data sets
-monthly_pats_elo <- temp_cleaned |> 
-  left_join(monthly_pats_elo, by = join_by(year, month)) |> 
+monthly_pats_elo <- monthly_pats_elo |> 
+  left_join(temp_cleaned, by = join_by(year, month)) |> 
   group_by(year, month)
 
 names(monthly_pats_elo) |> 
   intersect(names(pats_games))
 
 pats_temp_data <- monthly_pats_elo |> 
-  left_join(pats_games, by = join_by(year, month)) 
+  left_join(pats_games, by = join_by(week, month, year))
 
 pats_weather_data <- pats_temp_data |> 
   left_join(snow_cleaned, by = join_by(year, month)) |> 

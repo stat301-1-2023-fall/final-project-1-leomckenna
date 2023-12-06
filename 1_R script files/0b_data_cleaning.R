@@ -132,6 +132,14 @@ pats_elo_data <- pats_elo_data |>
 
 #Summarizing data by month for the elo data set to so I can analyze using monthly trends
 monthly_pats_elo <- pats_elo_data |> 
+  mutate(year = lubridate::year(date),
+         week_reset = if_else(substr(as.character(date), 6, 6) == "9", TRUE, FALSE),
+         week = cumsum(week_reset) + 1) %>%
+  relocate(date, year, week) |> 
+  select(-week_reset) %>%
+  group_by(season) %>%
+  mutate(week = row_number()) %>%
+  ungroup() |> 
   mutate(season = as.character(season),
          year = year(date),
          month = month(date)
@@ -146,7 +154,8 @@ monthly_pats_elo <- pats_elo_data |>
   ungroup() |> 
   mutate(year = as.character(year)) |> 
   mutate(month = month.abb[month]) |> 
-  mutate(wins_per_month = as_factor(wins_per_month))
+  mutate(wins_per_month = as_factor(wins_per_month)) 
+
 
 #Saving elo data as an rds
 write_rds(monthly_pats_elo, "data/elo_data.rds")
