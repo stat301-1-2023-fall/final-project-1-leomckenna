@@ -1,7 +1,19 @@
-## Datasets
+## **Cleaned datasets and codebooks**
 
-In this data folder, there are three distinct data sets. The first is nfl_elo.csv which is taken from the data sets in the GIthub of FiveThirtyEight. It has data ranging over 100 years about the elo ratings
-of each football team in each NFL matchup that has occurred in that span. The second data set is also taken from FiveThirtyEight, and also pertains to NFL data. This data set starts much later than the elo data set, and focuses on different variables, including a lot of information about betting including money lines. It does also have some weather data which proves useful, and most importantly it provides the location of each game.
-The final data set is foxboro_weather_data.csv which came from a .pdf file I downloaded from the National Oceanic and Atmospheric Administration's Data on the National Weather Service's website. The data shows monthly temperatures from the Foxboro weather tower starting in the year 2000. The third is a data set of nfl games as well, but this data set crucially includes the locations which I will use to determine home vs away games.
+This folder contains contains both the cleaned data sets converted into .rds files as well as the code books for each of the five sets of data used. The code books for elo_data[^readme--1] and game_data[^readme--2] are both taken directly from the FiveThirtyEight Github page, as they were already provided with the data. 
+
+The data sets and codebooks are:
+
+- `elo_data.rds`
+- `game_data.rds`
+- `pats_weather_data.rds`
+- `rain_data.rds`
+- `snow_data.rds`
+- `temp_data.rds`
+
+
+[^readme--1]: <https://github.com/fivethirtyeight/data/tree/master/nfl-elo>
+
+[^readme--2]: <https://github.com/nflverse/nfldata/blob/master/DATASETS.md#games>
 
 

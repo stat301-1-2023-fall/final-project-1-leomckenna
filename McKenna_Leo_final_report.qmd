@@ -34,6 +34,13 @@ Secondly, I have been playing in Scrabble Tournaments since I was in middle scho
 **Data Overview & Quality**
 The data I collected from FiveTHirtyEight was 
 
+```{r}
+table_output <- kable(pats_weather_data, format = "html", caption = "Patriot Weather Data")
+
+print(table_output)
+```
+
+
 
 
 **Exploratory Data Analysis**

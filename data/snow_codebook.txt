@@ -1,0 +1,6 @@
+Columns:
+- `year`: The year in which the data was recorded. Ranges from 2000 to 2023
+- `month`: The month in which the data was recorded. The months included in the data set are:
+September, October, November, December, January, February
+- `annual_snowfall`: The average snowfall for the entire year
+- `snowfall`: The average snowfall for each month of each year
